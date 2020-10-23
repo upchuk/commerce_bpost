@@ -1,0 +1,10 @@
+services:
+  commerce_bpost_pickup.pickup_points_cache:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [bpost_pickup_point]
+  commerce_bpost_pickup.points_manager:
+    class: Drupal\commerce_bpost_pickup\PickupPointManager
+    arguments: ['@language_manager', '@commerce_bpost_pickup.pickup_points_cache']

@@ -1,0 +1,10 @@
+name: Commerce BPost
+type: module
+description: 'Integrates with Bpost shipping manager'
+package: Commerce
+core_version_requirement: ^9
+dependencies:
+  - commerce:commerce_shipping
+  - commerce:commerce_price
+  - commerce:commerce_checkout
+  - drupal:telephone

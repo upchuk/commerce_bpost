@@ -1,0 +1,2 @@
+commerce_checkout.commerce_checkout_pane.bpost_shipping:
+  type: commerce_checkout.commerce_checkout_pane.shipping_information

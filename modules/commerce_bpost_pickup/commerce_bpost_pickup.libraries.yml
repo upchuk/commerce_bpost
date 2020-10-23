@@ -1,0 +1,12 @@
+bpost_map:
+  version:
+  js:
+    js/bpost_map.js: {}
+  css:
+    component:
+      css/bpost_map.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
+    - leaflet/leaflet-drupal

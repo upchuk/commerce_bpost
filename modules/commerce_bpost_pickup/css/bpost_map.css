@@ -1,0 +1,62 @@
+.leaflet-marker-icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-image: url("../images/marker.png");
+}
+
+.pickup-point-search-wrapper {
+  margin-bottom: 30px;
+}
+
+.pickup-point-search-wrapper {
+  display: block;
+}
+
+.pickup-point-grid--left, .pickup-point-grid--right {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 992px) {
+  .pickup-point-grid {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .pickup-point-grid--left {
+    width: 66%;
+  }
+
+  .pickup-point-grid--right {
+    width: 32%;
+  }
+}
+
+.bpost-poi-link {
+  display: block;
+  border: 1px solid #eee;
+  padding: 10px;
+}
+
+.bpost-poi-link.selected-poi {
+  border-color: #ff385a;
+}
+
+.bpost-pickup-point-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 400px;
+  overflow: auto;
+}
+
+.bpost-pickup-point-list li {
+  margin-bottom: 10px;
+}
+
+.selected-pickup-point:not(.hide) {
+  margin-top: 20px;
+  border: 1px solid #ff385a;
+  padding: 10px 10px 0 10px;
+}

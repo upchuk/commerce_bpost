@@ -1,0 +1,20 @@
+services:
+  plugin.manager.service:
+    class: Drupal\commerce_bpost\ServicePluginManager
+    parent: default_plugin_manager
+
+  plugin.manager.bpost_service:
+    class: Drupal\commerce_bpost\BpostServicePluginManager
+    parent: default_plugin_manager
+
+  commerce_bpost.order_subscriber:
+    class: Drupal\commerce_bpost\EventSubscriber\OrderSubscriber
+    arguments: ['@commerce_shipping.order_manager']
+    tags:
+      - { name: event_subscriber }
+
+  commerce_bpost.exception_subscriber:
+    class: Drupal\commerce_bpost\EventSubscriber\BpostExceptionSubscriber
+    arguments: ['@logger.factory', '@messenger']
+    tags:
+      - { name: event_subscriber }

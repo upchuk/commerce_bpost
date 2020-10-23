@@ -1,0 +1,20 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_commerce_inline_form_PLUGIN_ID_alter().
+ */
+function commerce_bpost_pickup_commerce_inline_form_alter(array &$inline_form, FormStateInterface $form_state, array &$complete_form) {
+  /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\InlineFormInterface $form */
+  $form = $inline_form['#inline_form'];
+  if ($form->getPluginId() !== 'customer_profile') {
+    return;
+  }
+
+  // If the currently selected service is pickup point, do not allow the profile
+  // scope to be 'billing' in order to prevent the field copy.
+  if ($form_state->get('bpost_service') === 'pickup_point') {
+    $inline_form['#profile_scope'] = 'shipping';
+  }
+}
