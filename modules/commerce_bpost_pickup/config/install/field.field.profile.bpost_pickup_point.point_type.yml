@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.point_type
+    - profile.type.bpost_pickup_point
+id: profile.bpost_pickup_point.point_type
+field_name: point_type
+entity_type: profile
+bundle: bpost_pickup_point
+label: 'Point type'
+description: "- 1: Post Office\r\n- 2: Post Point\r\n- 4: bpack 24/7"
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

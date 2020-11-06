@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies: {  }
+id: bpost_pickup_point
+label: 'Bpost Pickup Point'
+display_label: 'Pickup point'
+multiple: false
+registration: false
+roles: {  }
+allow_revisions: false
+new_revision: false

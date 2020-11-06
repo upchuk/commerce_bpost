@@ -331,6 +331,7 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    *   The price.
    */
   protected function determinePriceFromWeightSegment(Weight $weight, array $rate_amounts) {
+    // @todo convert incoming weight to gram.
     foreach ($rate_amounts as $segment => $price) {
       [$start, $end] = explode('_', $segment);
       $start_weight = new Weight($start, WeightUnit::GRAM);

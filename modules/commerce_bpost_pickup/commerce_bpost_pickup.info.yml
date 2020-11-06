@@ -5,3 +5,4 @@ package: Commerce
 core_version_requirement: ^9
 dependencies:
   - commerce_bpost:commerce_bpost
+  - drupal:leaflet

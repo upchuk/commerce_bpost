@@ -3,7 +3,7 @@
     "type": "drupal-module",
     "description": "Drupal Commerce BPost integrates with the BPost shipping service.",
     "require": {
-        "php": ">=7.0.8",
+        "php": ">=7.1",
         "antidot-be/bpost-api-library": "dev-master",
         "drupal/commerce_shipping": "^2.0",
         "drupal/core": "^9.0"
@@ -16,7 +16,7 @@
         "drupal/admin_toolbar": "2.x-dev",
         "drupal/core-dev": "^9.0",
         "drupal/devel_entity_updates": "3.x-dev",
-        "drupal/leaflet": "2.1.x-dev",
+        "drupal/leaflet": "^2.1",
         "drush/drush": "^10",
         "openeuropa/task-runner": "~1.0-beta2"
     },

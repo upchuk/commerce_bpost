@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.postal_code
+    - profile.type.bpost_pickup_point
+id: profile.bpost_pickup_point.postal_code
+field_name: postal_code
+entity_type: profile
+bundle: bpost_pickup_point
+label: 'Postal code'
+description: 'The postal code used for determining the profile by the customer.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
