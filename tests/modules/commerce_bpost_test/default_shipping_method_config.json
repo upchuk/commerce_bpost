@@ -1,0 +1,55 @@
+{
+  "service_configuration": {
+    "home_delivery": {
+      "rate_amounts": {
+        "national": {
+          "0_2000": {
+            "number": "10.00",
+            "currency_code": "EUR"
+          },
+          "2001_5000": {
+            "number": "20.00",
+            "currency_code": "EUR"
+          },
+          "5001_10000": {
+            "number": "30.00",
+            "currency_code": "EUR"
+          }
+        },
+        "international": {
+          "FR": {
+            "0_250": {
+              "number": "15",
+              "currency_code": "EUR"
+            },
+            "251_500": {
+              "number": "25",
+              "currency_code": "EUR"
+            }
+          },
+          "IT": {
+            "0_250": {
+              "number": "35",
+              "currency_code": "EUR"
+            },
+            "251_500": {
+              "number": "45",
+              "currency_code": "EUR"
+            }
+          }
+        }
+      },
+      "supports_international": "1"
+    }
+  },
+  "api": {
+    "username": "",
+    "password": "",
+    "remote_order_creation": 0
+  },
+  "default_package_type": "custom_box",
+  "services": [
+    "home_delivery"
+  ],
+  "workflow": "shipment_default"
+}

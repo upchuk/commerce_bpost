@@ -1,0 +1,82 @@
+<?php
+
+use Drupal\commerce_checkout\Entity\CheckoutFlow;
+use Drupal\commerce_order\Entity\OrderType;
+use Drupal\commerce_product\Entity\ProductVariationType;
+use Drupal\commerce_shipping\Entity\ShippingMethod;
+use Drupal\commerce_store\Entity\Store;
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Implements hook_install().
+ */
+function commerce_bpost_test_install() {
+
+  // Create a default store.
+  $store = Store::create([
+    'type' => 'online',
+    'name' => 'Test store',
+    'mail' => 'admin@example.com',
+    'default_currency' => 'EUR',
+    'timezone' => 'UTC',
+    'address' => [
+      'country_code' => 'BE',
+      'locality' => 'Brussels',
+      'postal_code' => 1000,
+      'address_line1' => 'Street name',
+    ],
+    'shipping_countries' => [
+      'BE',
+      'FR',
+      'IT',
+    ],
+    'is_default' => 1,
+  ]);
+
+  $store->save();
+
+  // Make the default product variation type shippable and give it dimensions.
+  $variation_type = ProductVariationType::load('default');
+  $traits = [
+    'purchasable_entity_dimensions',
+    'purchasable_entity_shippable',
+  ];
+  $variation_type->set('traits', $traits);
+  $variation_type->save();
+  /** @var \Drupal\commerce\EntityTraitManagerInterface $trait_manager */
+  $trait_manager = \Drupal::service('plugin.manager.commerce_entity_trait');
+  foreach ($traits as $id) {
+    $trait = $trait_manager->createInstance($id);
+    $trait_manager->installTrait($trait, 'commerce_product_variation', 'default');
+  }
+
+  // Enable shipping on the default order.
+  /** @var \Drupal\commerce_order\Entity\OrderTypeInterface $order_type */
+  $order_type = OrderType::load('default');
+  $order_type->setThirdPartySetting('commerce_shipping', 'shipment_type', 'default');
+  $order_type->save();
+  $field_definition = commerce_shipping_build_shipment_field_definition('default');
+  $configurable_field_manager = \Drupal::service('commerce.configurable_field_manager');
+  $configurable_field_manager->createField($field_definition);
+
+  // Create a shipping method.
+  $method = ShippingMethod::create([
+    'name' => 'BPost',
+    'condition_operator' => 'AND',
+    'status' => 1,
+    'stores' => [$store->id()],
+    'plugin' => [
+      'target_plugin_id' => 'bpost',
+      'target_plugin_configuration' => json_decode(file_get_contents(drupal_get_path('module', 'commerce_bpost_test') . '/default_shipping_method_config.json'), TRUE),
+    ]
+  ]);
+
+  $method->save();
+
+  // Update the checkout pane.
+  $storage = new FileStorage(drupal_get_path('module', 'commerce_bpost_test') . '/config/tasks');
+  $config = $storage->read('commerce_checkout.commerce_checkout_flow.default');
+  $entity_storage = \Drupal::entityTypeManager()->getStorage('commerce_checkout_flow');
+  $entity = $entity_storage->updateFromStorageRecord(CheckoutFlow::load('default'), $config);
+  $entity->save();
+}

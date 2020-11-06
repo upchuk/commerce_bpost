@@ -1,0 +1,7 @@
+name: Commerce BPost Test
+type: module
+description: 'Test module for Commerce Bpost'
+package: Testing
+core_version_requirement: ^9
+dependencies:
+  - commerce_bpost:commerce_bpost

@@ -1,0 +1,49 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_bpost
+    - commerce_shipping
+id: default
+label: Default
+plugin: multistep_default
+configuration:
+  display_checkout_progress: true
+  display_checkout_progress_breadcrumb_links: false
+  panes:
+    login:
+      allow_guest_checkout: true
+      allow_registration: false
+      step: login
+      weight: 0
+    contact_information:
+      double_entry: false
+      step: _disabled
+      weight: 7
+    billing_information:
+      step: order_information
+      weight: 2
+    review:
+      step: review
+      weight: 3
+    completion_message:
+      message:
+        value: "Your order number is [commerce_order:order_number].\r\nYou can view your order on your account page when logged in."
+        format: plain_text
+      step: complete
+      weight: 4
+    order_summary:
+      view: null
+      step: _sidebar
+      weight: 6
+    bpost_shipping:
+      require_shipping_profile: true
+      step: order_information
+      weight: 1
+    completion_register:
+      step: complete
+      weight: 5
+    shipping_information:
+      require_shipping_profile: true
+      step: _disabled
+      weight: 8

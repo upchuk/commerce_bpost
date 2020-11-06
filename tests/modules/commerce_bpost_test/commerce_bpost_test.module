@@ -1,0 +1,14 @@
+<?php
+
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for Product entities.
+ */
+function commerce_bpost_test_commerce_product_presave(Drupal\Core\Entity\EntityInterface $entity) {
+  // Ensure each product has a store set.
+  if ($entity->get('stores')->isEmpty()) {
+    $store_resolver = \Drupal::service('commerce_store.default_store_resolver');
+    $default_store = $store_resolver->resolve();
+    $entity->set('stores', $default_store);
+  }
+}
