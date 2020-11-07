@@ -74,9 +74,11 @@ function commerce_bpost_test_install() {
   $method->save();
 
   // Update the checkout pane.
-  $storage = new FileStorage(drupal_get_path('module', 'commerce_bpost_test') . '/config/tasks');
-  $config = $storage->read('commerce_checkout.commerce_checkout_flow.default');
-  $entity_storage = \Drupal::entityTypeManager()->getStorage('commerce_checkout_flow');
-  $entity = $entity_storage->updateFromStorageRecord(CheckoutFlow::load('default'), $config);
-  $entity->save();
+  if (\Drupal::entityTypeManager()->hasDefinition('commerce_checkout_flow')) {
+    $storage = new FileStorage(drupal_get_path('module', 'commerce_bpost_test') . '/config/tasks');
+    $config = $storage->read('commerce_checkout.commerce_checkout_flow.default');
+    $entity_storage = \Drupal::entityTypeManager()->getStorage('commerce_checkout_flow');
+    $entity = $entity_storage->updateFromStorageRecord(CheckoutFlow::load('default'), $config);
+    $entity->save();
+  }
 }

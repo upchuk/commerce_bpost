@@ -83,7 +83,7 @@ class HomeDelivery extends BpostServicePluginBase {
 
     $address = new Address();
     $street = $values['address_line1'];
-    if ($values['address_line2']) {
+    if (isset($values['address_line2']) && $values['address_line2']) {
       $street .= ', ' . $values['address_line2'];
     }
     $address->setStreetName($street);
@@ -92,7 +92,7 @@ class HomeDelivery extends BpostServicePluginBase {
     $address->setCountryCode($values['country_code']);
 
     $receiver = new Receiver();
-    if ($values['organization']) {
+    if (isset($values['organization']) && $values['organization']) {
       $receiver->setCompany($values['organization']);
     }
     $receiver->setAddress($address);
@@ -100,7 +100,7 @@ class HomeDelivery extends BpostServicePluginBase {
     if ($shipping_profile->hasField('phone_number') && !$shipping_profile->get('phone_number')->isEmpty()) {
       $receiver->setPhoneNumber($shipping_profile->get('phone_number')->value);
     }
-    $receiver->setEmailAddress($shipping_profile->getOwner()->getEmail());
+    $receiver->setEmailAddress($shipment->getOrder()->getCustomer()->getEmail());
 
     $box = new Box();
 
@@ -112,7 +112,7 @@ class HomeDelivery extends BpostServicePluginBase {
       $destination = new International();
       $destination->setParcelWeight((int) $shipment->getWeight()->getNumber());
       $customs_info = new CustomsInfo();
-      $price = (float) $shipment->getOrder()->getTotalPrice()->getNumber();
+      $price = (float) $shipment->getOrder()->getSubtotalPrice()->getNumber();
       $customs_info->setParcelValue((int) $price * 100);
       $customs_info->setContentDescription($this->t('Books'));
       $customs_info->setShipmentType(CustomsInfo::CUSTOM_INFO_SHIPMENT_TYPE_GOODS);
