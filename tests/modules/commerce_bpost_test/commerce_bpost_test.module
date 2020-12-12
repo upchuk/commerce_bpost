@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Implements hook_ENTITY_TYPE_presave() for Product entities.
  */

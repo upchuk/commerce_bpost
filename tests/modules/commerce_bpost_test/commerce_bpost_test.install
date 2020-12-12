@@ -36,12 +36,14 @@ function commerce_bpost_test_install() {
   $store->save();
 
   // Make the default product variation type shippable and give it dimensions.
+  /** @var \Drupal\commerce_product\Entity\ProductVariationTypeInterface $variation_type */
   $variation_type = ProductVariationType::load('default');
   $traits = [
     'purchasable_entity_dimensions',
     'purchasable_entity_shippable',
   ];
   $variation_type->set('traits', $traits);
+  $variation_type->setGenerateTitle(FALSE);
   $variation_type->save();
   /** @var \Drupal\commerce\EntityTraitManagerInterface $trait_manager */
   $trait_manager = \Drupal::service('plugin.manager.commerce_entity_trait');
