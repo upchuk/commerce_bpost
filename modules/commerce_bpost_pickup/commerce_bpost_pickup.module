@@ -1,6 +1,9 @@
 <?php
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Implements hook_commerce_inline_form_PLUGIN_ID_alter().
@@ -16,5 +19,25 @@ function commerce_bpost_pickup_commerce_inline_form_alter(array &$inline_form, F
   // scope to be 'billing' in order to prevent the field copy.
   if ($form_state->get('bpost_service') === 'pickup_point') {
     $inline_form['#profile_scope'] = 'shipping';
+  }
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function commerce_bpost_pickup_local_tasks_alter(&$local_tasks) {
+  if (isset($local_tasks['profile.user_page:bpost_pickup_point'])) {
+    // We don't want to have a local task for this Profile type.
+    unset($local_tasks['profile.user_page:bpost_pickup_point']);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for the Profile entity type.
+ */
+function commerce_bpost_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  if ($entity->bundle() === 'bpost_pickup_point' && \Drupal::service('current_route_match')->getRouteName() === 'profile.user_page.single') {
+    // The bpost pickup profile should not be accessible on the user route.
+    return AccessResult::forbidden();
   }
 }
