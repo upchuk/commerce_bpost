@@ -5,8 +5,8 @@ drupal:
     host: "mariadb"
     port: "3306"
     name: "drupal"
-    user: "drupal"
-    password: "drupal"
+    user: "root"
+    password: "password"
   post_install:
     - "./vendor/bin/drush en admin_toolbar commerce commerce_product commerce_checkout commerce_cart commerce_price commerce_bpost -y"
     - "./vendor/bin/drush en commerce_bpost_test -y"
@@ -17,6 +17,8 @@ drupal:
         - "vendor"
         - "${drupal.root}"
       extension_discovery_scan_tests: TRUE
+      test_database_name: drupal_test
+      test_database_location: sites/default/files
 
 selenium:
   host: "http://selenium"
@@ -30,6 +32,12 @@ commands:
     - { task: "run", command: "setup:phpunit" }
     # Temporarily remove a non-supported contrib submodule.
     - { task: "remove", file: "build/modules/contrib/admin_toolbar/admin_toolbar_search" }
+    - task: "append"
+      file: "build/sites/default/settings.php"
+      text: |
+        if (file_exists($app_root . '/' . $site_path . '/settings.testing.php')) {
+          include $app_root . '/' . $site_path . '/settings.testing.php';
+        }
   setup:phpunit:
     - { task: "process", source: "phpunit.xml.dist", destination: "phpunit.xml" }
   drupal:phpcs:

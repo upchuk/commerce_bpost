@@ -5,38 +5,16 @@ namespace Drupal\Tests\commerce_bpost\ExistingSiteJavascript;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\physical\Calculator;
 use Drupal\profile\Entity\Profile;
-use Drupal\Tests\commerce_bpost\Traits\EntityManagerTrait;
-use Drupal\Tests\commerce_bpost\Traits\ExistingSiteCleanupTrait;
-use Drupal\Tests\commerce_bpost\Traits\HelperTrait;
-use weitzman\DrupalTestTraits\ExistingSiteSelenium2DriverTestBase;
 
 /**
  * Tests the home delivery capability.
  */
-class HomeDeliveryTest extends ExistingSiteSelenium2DriverTestBase {
-
-  use EntityManagerTrait;
-  use ExistingSiteCleanupTrait;
-  use HelperTrait;
+class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
-    parent::setUp();
-
-    $this->cleanupEntityType('profile');
-    $this->cleanupEntityType('commerce_order');
-    $this->cleanupEntityType('commerce_order_item');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function tearDown(): void {
-    $this->deleteExtraEntities();
-    parent::tearDown();
-  }
+  protected $refreshDatabase = TRUE;
 
   /**
    * Tests a default flow for the home delivery plugin.
@@ -70,6 +48,7 @@ class HomeDeliveryTest extends ExistingSiteSelenium2DriverTestBase {
     $this->getSession()->getPage()->fillField('City', 'Brussels');
 
     $this->getSession()->getPage()->pressButton('Continue to review');
+
     $this->assertSession()->pageTextContains('BPost Shipping');
     $this->assertSession()->pageTextContains('WEBOMELETTE');
     $this->assertSession()->pageTextContains('Danny S');

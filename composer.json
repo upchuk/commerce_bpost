@@ -61,12 +61,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Drupal\\commerce_bpost\\": "./src"
+            "Drupal\\commerce_bpost\\": "./src",
+            "Drupal\\commerce_bpost_pickup\\": "./modules/commerce_bpost_pickup/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Drupal\\Tests\\commerce_bpost\\": "./tests/src"
+            "Drupal\\Tests\\commerce_bpost\\": "./tests/src",
+            "Drupal\\Tests\\commerce_bpost_pickup\\": "./modules/commerce_bpost_pickup/tests/src"
         }
     }
 }

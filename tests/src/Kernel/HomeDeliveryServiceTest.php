@@ -27,7 +27,7 @@ use Drupal\Tests\commerce_shipping\Kernel\ShippingKernelTestBase;
  *
  * @package Drupal\Tests\commerce_bpost\Kernel
  */
-class BpostServiceTest extends BpostKernelTestBase {
+class HomeDeliveryServiceTest extends BpostKernelTestBase {
 
   /**
    * Tests that an API "box" can be prepared using the Home Delivery service.
@@ -45,61 +45,10 @@ class BpostServiceTest extends BpostKernelTestBase {
     ]);
     $international_shipping_profile->save();
 
-    $product_price = new Price('20', 'EUR');
-    $shipping_price = new Price('10', 'EUR');
-
-    $variation = ProductVariation::create([
-      'type' => 'default',
-      'sku' => 'test-product-01',
-      'title' => 'The Godfather',
-      'price' => $product_price,
-    ]);
-    $variation->save();
-
-    $order_item = OrderItem::create([
-      'type' => 'default',
-      'quantity' => 2,
-      'title' => 'A book',
-      'purchased_entity' => $variation,
-      'unit_price' => $product_price,
-    ]);
-
-    /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
-    $order = Order::create([
-      'type' => 'default',
-      'state' => 'draft',
-      'mail' => $this->user->getEmail(),
-      'uid' => $this->user->id(),
-      'store_id' => $this->store->id(),
-      'order_items' => [$order_item],
-    ]);
-    $order->save();
-
-    $shipping_method = ShippingMethod::load(1);
-    /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */
-    $shipment = Shipment::create([
-      'type' => 'default',
-      'order_id' => $order->id(),
-      'shipping_method' => $shipping_method,
-      'title' => 'Shipment',
-      'amount' => $shipping_price,
-      'items' => [
-        new ShipmentItem([
-          'order_item_id' => 10,
-          'title' => 'Book',
-          'quantity' => 1,
-          'weight' => new Weight('10', 'g'),
-          'declared_value' => $product_price,
-        ]),
-      ],
-    ]);
-
-    $shipment->save();
-
     /** @var \Drupal\commerce_bpost\Plugin\BpostService\HomeDelivery $home_delivery */
-    $home_delivery = $shipping_method->getPlugin()->instantiateServicePlugin('home_delivery');
-    $shipment->setShippingProfile($national_shipping_profile);
-    $box = $home_delivery->prepareDeliveryBox($shipment);
+    $home_delivery = $this->shipping_method->getPlugin()->instantiateServicePlugin('home_delivery');
+    $this->shipment->setShippingProfile($national_shipping_profile);
+    $box = $home_delivery->prepareDeliveryBox($this->shipment);
     $this->assertInstanceOf(Box::class, $box);
     $destination = $box->getNationalBox();
     $this->assertInstanceOf(Box\AtHome::class, $destination);
@@ -120,16 +69,16 @@ class BpostServiceTest extends BpostKernelTestBase {
     $national_shipping_profile->set('address', $this->nationalAddress);
     $national_shipping_profile->set('phone_number', 5555);
     $national_shipping_profile->save();
-    $box = $home_delivery->prepareDeliveryBox($shipment);
+    $box = $home_delivery->prepareDeliveryBox($this->shipment);
     $receiver = $box->getNationalBox()->getReceiver();
     $this->assertEquals('My company', $receiver->getCompany());
     $this->assertEquals(5555, $receiver->getPhoneNumber());
     $this->assertAddress($receiver->getAddress(), $this->nationalAddress);
 
     // Test the international profile.
-    $shipment->setShippingProfile($international_shipping_profile);
-    $shipment->save();
-    $box = $home_delivery->prepareDeliveryBox($shipment);
+    $this->shipment->setShippingProfile($international_shipping_profile);
+    $this->shipment->save();
+    $box = $home_delivery->prepareDeliveryBox($this->shipment);
     $this->assertInstanceOf(Box::class, $box);
     /** @var \Bpost\BpostApiClient\Bpost\Order\Box\International $destination */
     $destination = $box->getInternationalBox();
@@ -137,7 +86,7 @@ class BpostServiceTest extends BpostKernelTestBase {
     $this->assertEquals('10', $destination->getParcelWeight());
     $this->assertEquals(Product::PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO, $destination->getProduct());
     $customs_info = $destination->getCustomsInfo();
-    $expected_value = (float) $order->getSubtotalPrice()->getNumber();
+    $expected_value = (float) $this->order->getSubtotalPrice()->getNumber();
     $this->assertEquals((int) $expected_value * 100, $customs_info->getParcelValue());
     $this->assertEquals('Books', $customs_info->getContentDescription());
     $this->assertEquals(Box\CustomsInfo\CustomsInfo::CUSTOM_INFO_SHIPMENT_TYPE_GOODS, $customs_info->getShipmentType());
