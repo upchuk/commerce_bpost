@@ -2,11 +2,11 @@
 
 namespace Drupal\Tests\commerce_bpost\Kernel;
 
-use Box\CustomsInfo\CustomsInfo;
-use Box\International;
-use Box\AtHome;
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box;
+use Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
+use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
+use Bpost\BpostApiClient\Bpost\Order\Box\International;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Drupal\profile\Entity\Profile;

@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\commerce_bpost_pickup\Kernel;
 
-use Box\At247;
-use Box\AtBpost;
 use Bpost\BpostApiClient\Bpost\Order\Box;
+use Bpost\BpostApiClient\Bpost\Order\Box\At247;
+use Bpost\BpostApiClient\Bpost\Order\Box\AtBpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Drupal\commerce_bpost\Exception\BpostCheckoutException;

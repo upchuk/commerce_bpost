@@ -2,15 +2,15 @@
 
 namespace Drupal\commerce_bpost_pickup\Plugin\BpostService;
 
-use Box\AtBpost;
-use Box\At247;
-use Geo6\Poi;
 use Bpost\BpostApiClient\Bpost\Order\Box;
+use Bpost\BpostApiClient\Bpost\Order\Box\At247;
+use Bpost\BpostApiClient\Bpost\Order\Box\AtBpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\National\Unregistered;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
+use Bpost\BpostApiClient\Geo6\Poi;
 use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
 use Drupal\commerce\AjaxFormTrait;
 use Drupal\commerce_bpost\BpostServicePluginBase;
