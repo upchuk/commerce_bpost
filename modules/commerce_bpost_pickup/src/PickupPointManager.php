@@ -105,7 +105,6 @@ class PickupPointManager {
       return NULL;
     }
 
-    $poi = $this->geo->getServicePointDetails($point_id, $this->getLanguage(), $point_type);
     $this->cache->set($cid, $poi);
     return $poi;
   }

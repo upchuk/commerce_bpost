@@ -70,9 +70,10 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
     // by default the billing profile is copied over from the shipping one.
     $this->assertEquals($shipping_profile->get('address')->first()->getValue(), $billing_profile->get('address')->first()->getValue());
 
-    // Assert we have a shipment values are created correctly.
+    // Assert the shipment values are created correctly.
     $this->assertEquals('custom_box', $shipment->getPackageType()->getId());
     $this->assertEquals('BPost', $shipment->getShippingMethod()->label());
+    $this->assertEquals('home_delivery', $shipment->getShippingService());
     $this->assertEquals($shipping_profile->id(), $shipment->getShippingProfile()->id());
     $this->assertEquals(10, Calculator::trim($shipment->getWeight()->getNumber()));
     $this->assertEquals(10, Calculator::trim($shipment->getAmount()->getNumber()));

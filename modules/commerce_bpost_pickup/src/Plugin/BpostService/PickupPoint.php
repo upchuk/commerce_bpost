@@ -87,7 +87,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
         // 1 is post office.
         1 => 1,
         // 2 is post point.
-        2 => 1,
+        2 => 2,
       ],
     ] + parent::defaultConfiguration();
   }
@@ -387,7 +387,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
           '#markup' => '<p><strong>' . $selected_point_details->getOffice() . '</strong></p>',
         ];
         $pane_form['grid']['map_wrapper']['selection'][] = [
-          '#markup' => '<p>' . $point_details[$poi->getId()]['address'] . '</p>',
+          '#markup' => '<p>' . $point_details[$selected_point_details->getId()]['address'] . '</p>',
         ];
       }
       else {
