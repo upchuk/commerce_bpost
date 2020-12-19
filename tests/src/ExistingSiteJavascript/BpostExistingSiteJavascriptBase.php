@@ -44,6 +44,7 @@ class BpostExistingSiteJavascriptBase extends ExistingSiteSelenium2DriverTestBas
         unset($GLOBALS['conf']['container_service_providers']['InstallerServiceProvider']);
       }
       $directory = DRUPAL_ROOT . '/sites/default';
+      \Drupal::service('file_system')->chmod($directory, 0775);
       file_put_contents($directory . '/settings.testing.php', "<?php\n\$databases['default']['default']['database'] = 'drupal_test';", FILE_APPEND);
       $info = Database::getConnectionInfo('default');
       $info['default']['database'] = Settings::get('test_database_name');
