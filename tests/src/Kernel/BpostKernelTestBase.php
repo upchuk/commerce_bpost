@@ -9,7 +9,6 @@ use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\commerce_product\Entity\ProductVariationType;
 use Drupal\commerce_shipping\Entity\Shipment;
-use Drupal\commerce_shipping\Entity\ShippingMethod;
 use Drupal\commerce_shipping\ShipmentItem;
 use Drupal\physical\Weight;
 use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
@@ -29,19 +28,25 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
   protected $user;
 
   /**
+   *  A test order.
+   *
    * @var \Drupal\commerce_order\Entity\OrderInterface
    */
   protected $order;
 
   /**
+   * A test shipment.
+   *
    * @var \Drupal\commerce_shipping\Entity\ShipmentInterface
    */
   protected $shipment;
 
   /**
+   * A test shipment method.
+   *
    * @var \Drupal\commerce_shipping\Entity\ShippingMethodInterface
    */
-  protected $shipping_method;
+  protected $shippingMethod;
 
   /**
    * A default name for an address.
@@ -94,7 +99,7 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
       'commerce_order',
       'commerce_shipping',
       'commerce_bpost',
-      'commerce_bpost_test'
+      'commerce_bpost_test',
     ]);
 
     /** @var \Drupal\commerce_product\Entity\ProductVariationTypeInterface $product_variation_type */
@@ -113,18 +118,18 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
     $this->user = $this->createUser(['mail' => 'example@example.org']);
 
     $this->nationalAddress = [
-        'country_code' => 'BE',
-        'locality' => 'Brussels',
-        'postal_code' => 1050,
-        'address_line1' => 'Brussels street name',
-      ] + $this->name;
+      'country_code' => 'BE',
+      'locality' => 'Brussels',
+      'postal_code' => 1050,
+      'address_line1' => 'Brussels street name',
+    ] + $this->name;
 
     $this->internationalAddress = [
-        'country_code' => 'FR',
-        'locality' => 'Paris',
-        'postal_code' => 75016,
-        'address_line1' => 'Paris street name',
-      ] + $this->name;
+      'country_code' => 'FR',
+      'locality' => 'Paris',
+      'postal_code' => 75016,
+      'address_line1' => 'Paris street name',
+    ] + $this->name;
 
     // Create a default order setup.
     $product_price = new Price('20', 'EUR');
@@ -158,13 +163,13 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
     $this->order->save();
 
     $shipping_methods = \Drupal::entityTypeManager()->getStorage('commerce_shipping_method')->loadByProperties(['name' => 'BPost']);
-    $this->shipping_method = reset($shipping_methods);
+    $this->shippingMethod = reset($shipping_methods);
 
     /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */
     $this->shipment = Shipment::create([
       'type' => 'default',
       'order_id' => $this->order->id(),
-      'shipping_method' => $this->shipping_method,
+      'shipping_method' => $this->shippingMethod,
       'title' => 'Shipment',
       'amount' => $shipping_price,
       'items' => [
@@ -185,7 +190,9 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
    * Asserts that an API address object contains the correct values.
    *
    * @param \Bpost\BpostApiClient\Bpost\Order\Address $address
+   *   The BPost address.
    * @param array $expected
+   *   The expected values.
    */
   protected function assertAddress(Address $address, array $expected) {
     $this->assertEquals($expected['country_code'], $address->getCountryCode());

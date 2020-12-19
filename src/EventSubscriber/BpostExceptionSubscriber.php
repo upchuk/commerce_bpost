@@ -88,4 +88,5 @@ class BpostExceptionSubscriber implements EventSubscriberInterface {
     $error = Error::renderExceptionSafe($exception);
     $this->logger->error($error);
   }
+
 }

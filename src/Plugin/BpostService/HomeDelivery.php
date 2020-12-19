@@ -37,6 +37,9 @@ class HomeDelivery extends BpostServicePluginBase {
    */
   protected $inlineFormManager;
 
+  /**
+   *
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, ShipmentManagerInterface $shipmentManager, OrderShipmentSummaryInterface $shipmentSummary, PackerManagerInterface $packerManager, InlineFormManager $inlineFormManager, CountryRepositoryInterface $countryRepository) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entityTypeManager, $shipmentManager, $shipmentSummary, $packerManager, $countryRepository);
     $this->inlineFormManager = $inlineFormManager;
@@ -215,7 +218,7 @@ class HomeDelivery extends BpostServicePluginBase {
     $length = 40;
     if (mb_strlen($street) > $length) {
       $element = $pane_form['shipping_profile']['address']['widget'][0]['address']['address_line1'] ?? $pane_form['shipping_profile'];
-      $form_state->setError($element,  $this->t('Please ensure that the two address lines combined are under 40 characters long.'));
+      $form_state->setError($element, $this->t('Please ensure that the two address lines combined are under 40 characters long.'));
     }
   }
 
@@ -296,4 +299,5 @@ class HomeDelivery extends BpostServicePluginBase {
 
     return $shipping_profile;
   }
+
 }

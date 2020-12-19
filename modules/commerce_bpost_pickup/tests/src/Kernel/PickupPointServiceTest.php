@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\commerce_bpost_pickup\Kernel;
 
+use Box\At247;
+use Box\AtBpost;
 use Bpost\BpostApiClient\Bpost\Order\Box;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
@@ -46,7 +48,7 @@ class PickupPointServiceTest extends BpostKernelTestBase {
       'point_id' => 0,
       'point_type' => 1,
       'postal_code' => 1000,
-      'uid' => $this->user->id()
+      'uid' => $this->user->id(),
     ]);
     $shipping_profile->save();
 
@@ -62,7 +64,7 @@ class PickupPointServiceTest extends BpostKernelTestBase {
     $this->order->save();
 
     /** @var \Drupal\commerce_bpost_pickup\Plugin\BpostService\PickupPoint $pickup_point */
-    $pickup_point = $this->shipping_method->getPlugin()->instantiateServicePlugin('pickup_point');
+    $pickup_point = $this->shippingMethod->getPlugin()->instantiateServicePlugin('pickup_point');
     $this->shipment->setShippingProfile($shipping_profile);
     $exception = NULL;
     try {
@@ -85,7 +87,7 @@ class PickupPointServiceTest extends BpostKernelTestBase {
     $this->assertInstanceOf(Box::class, $box);
     /** @var \Bpost\BpostApiClient\Bpost\Order\Box\AtBpost $destination */
     $destination = $box->getNationalBox();
-    $this->assertInstanceOf(Box\AtBpost::class, $destination);
+    $this->assertInstanceOf(AtBpost::class, $destination);
     $this->assertEquals(Product::PRODUCT_NAME_BPACK_AT_BPOST, $destination->getProduct());
     $this->assertEquals('10', $destination->getWeight());
     $this->assertEquals('20100', $destination->getPugoId());
@@ -117,7 +119,7 @@ class PickupPointServiceTest extends BpostKernelTestBase {
     $box = $pickup_point->prepareDeliveryBox($this->shipment);
     /** @var \Bpost\BpostApiClient\Bpost\Order\Box\At247 $destination */
     $destination = $box->getNationalBox();
-    $this->assertInstanceOf(Box\At247::class, $destination);
+    $this->assertInstanceOf(At247::class, $destination);
     $this->assertEquals(Product::PRODUCT_NAME_BPACK_24_7, $destination->getProduct());
     $this->assertEquals('10', $destination->getWeight());
     $this->assertEquals('18448', $destination->getParcelsDepotId());

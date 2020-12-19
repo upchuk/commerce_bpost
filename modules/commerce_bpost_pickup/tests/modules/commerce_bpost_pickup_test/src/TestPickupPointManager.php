@@ -39,4 +39,5 @@ class TestPickupPointManager extends PickupPointManager {
 
     return NULL;
   }
+
 }

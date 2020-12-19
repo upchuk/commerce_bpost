@@ -110,7 +110,7 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
     $this->getSession()->getPage()->selectFieldOption('Country', 'France');
     $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->getPage()->fillField('Street address', 'One street');
-    $this->getSession()->getPage()->fillField('Postal code',10000);
+    $this->getSession()->getPage()->fillField('Postal code', 10000);
     $this->getSession()->getPage()->fillField('City', 'Paris');
     $this->getSession()->getPage()->pressButton('Continue to review');
     \Drupal::entityTypeManager()->getStorage('commerce_shipment')->resetCache();
@@ -123,17 +123,20 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
   /**
    * Tests that the shipment price is calculated based on weight and location.
    *
-   * @dataProvider providerShippingPrices
-   *
-   * @param $weight
+   * @param string $weight
    *   The product weight.
-   * @param $country
+   * @param string $country
    *   The shipping country.
-   * @param $price
+   * @param int $price
    *   The expected price.
+   *
+   * @dataProvider providerShippingPrices
    */
   public function testHomeDeliveryShippingPrice($weight, $country, $price) {
-    $product = $this->createProduct(10, NULL,  ['number' => $weight, 'unit' => 'g']);
+    $product = $this->createProduct(10, NULL, [
+      'number' => $weight,
+      'unit' => 'g',
+    ]);
     $this->markEntityForCleanup($product);
 
     $user = $this->createUser();
@@ -164,7 +167,7 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
     $orders = \Drupal::entityTypeManager()->getStorage('commerce_order')->loadByProperties(['mail' => $user->getEmail()]);
     /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
     $order = reset($orders);
-    /** @var ShipmentInterface $shipment */
+    /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */
     $shipment = $order->get('shipments')->entity;
     $this->assertInstanceOf(ShipmentInterface::class, $shipment);
     $this->assertEquals($price, Calculator::trim($shipment->getAmount()->getNumber()));
@@ -174,6 +177,7 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
    * Data provider for testHomeDeliveryShippingPrice().
    *
    * @return array
+   *   The test cases.
    */
   public function providerShippingPrices() {
     return [
@@ -184,4 +188,5 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
      ['400', 'Italy', 45],
     ];
   }
+
 }

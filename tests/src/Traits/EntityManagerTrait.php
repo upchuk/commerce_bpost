@@ -39,6 +39,23 @@ trait EntityManagerTrait {
     return array_shift($entity_list);
   }
 
+  /**
+   * Creates a product.
+   *
+   * @param float $price
+   *   The price.
+   * @param null $dimensions
+   *   The dimensions.
+   * @param null $weight
+   *   The weight.
+   * @param string $bundle
+   *   The bundle.
+   * @param string|null $title
+   *   The title.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductInterface
+   *   The product.
+   */
   protected function createProduct(float $price, $dimensions = NULL, $weight = NULL, string $bundle = 'default', string $title = NULL) {
     $variation = ProductVariation::create([
       'type' => $bundle,
@@ -49,7 +66,12 @@ trait EntityManagerTrait {
         'number' => $price,
         'currency_code' => 'EUR',
       ],
-      'dimensions' => $dimensions ?? ['length' => 10, 'width' => 10, 'height' => 10, 'unit' => 'mm'],
+      'dimensions' => $dimensions ?? [
+        'length' => 10,
+          'width' => 10,
+          'height' => 10,
+          'unit' => 'mm',
+        ],
       'weight' => $weight ?? ['number' => 10, 'unit' => 'g'],
     ]);
     $variation->save();

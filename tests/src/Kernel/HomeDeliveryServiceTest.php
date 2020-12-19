@@ -2,25 +2,14 @@
 
 namespace Drupal\Tests\commerce_bpost\Kernel;
 
+use Box\CustomsInfo\CustomsInfo;
+use Box\International;
+use Box\AtHome;
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
-use Drupal\commerce_bpost\BpostServiceInterface;
-use Drupal\commerce_order\Entity\Order;
-use Drupal\commerce_order\Entity\OrderItem;
-use Drupal\commerce_order\Entity\OrderType;
-use Drupal\commerce_price\Price;
-use Drupal\commerce_product\Entity\ProductVariation;
-use Drupal\commerce_product\Entity\ProductVariationType;
-use Drupal\commerce_shipping\Entity\Shipment;
-use Drupal\commerce_shipping\Entity\ShippingMethod;
-use Drupal\commerce_shipping\ShipmentItem;
-use Drupal\commerce_store\Entity\Store;
-use Drupal\physical\Weight;
 use Drupal\profile\Entity\Profile;
-use Drupal\Tests\commerce_order\Kernel\OrderKernelTestBase;
-use Drupal\Tests\commerce_shipping\Kernel\ShippingKernelTestBase;
 
 /**
  * Tests the BPost services.
@@ -46,16 +35,16 @@ class HomeDeliveryServiceTest extends BpostKernelTestBase {
     $international_shipping_profile->save();
 
     /** @var \Drupal\commerce_bpost\Plugin\BpostService\HomeDelivery $home_delivery */
-    $home_delivery = $this->shipping_method->getPlugin()->instantiateServicePlugin('home_delivery');
+    $home_delivery = $this->shippingMethod->getPlugin()->instantiateServicePlugin('home_delivery');
     $this->shipment->setShippingProfile($national_shipping_profile);
     $box = $home_delivery->prepareDeliveryBox($this->shipment);
     $this->assertInstanceOf(Box::class, $box);
     $destination = $box->getNationalBox();
-    $this->assertInstanceOf(Box\AtHome::class, $destination);
+    $this->assertInstanceOf(AtHome::class, $destination);
     $this->assertEquals('10', $destination->getWeight());
     $this->assertEquals(Product::PRODUCT_NAME_BPACK_24H_PRO, $destination->getProduct());
 
-    /** @var Receiver $receiver */
+    /** @var \Bpost\BpostApiClient\Bpost\Order\Receiver $receiver */
     $receiver = $destination->getReceiver();
     $this->assertInstanceOf(Receiver::class, $receiver);
     $address = $receiver->getAddress();
@@ -82,15 +71,15 @@ class HomeDeliveryServiceTest extends BpostKernelTestBase {
     $this->assertInstanceOf(Box::class, $box);
     /** @var \Bpost\BpostApiClient\Bpost\Order\Box\International $destination */
     $destination = $box->getInternationalBox();
-    $this->assertInstanceOf(Box\International::class, $destination);
+    $this->assertInstanceOf(International::class, $destination);
     $this->assertEquals('10', $destination->getParcelWeight());
     $this->assertEquals(Product::PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO, $destination->getProduct());
     $customs_info = $destination->getCustomsInfo();
     $expected_value = (float) $this->order->getSubtotalPrice()->getNumber();
     $this->assertEquals((int) $expected_value * 100, $customs_info->getParcelValue());
     $this->assertEquals('Books', $customs_info->getContentDescription());
-    $this->assertEquals(Box\CustomsInfo\CustomsInfo::CUSTOM_INFO_SHIPMENT_TYPE_GOODS, $customs_info->getShipmentType());
-    $this->assertEquals(Box\CustomsInfo\CustomsInfo::CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTS, $customs_info->getParcelReturnInstructions());
+    $this->assertEquals(CustomsInfo::CUSTOM_INFO_SHIPMENT_TYPE_GOODS, $customs_info->getShipmentType());
+    $this->assertEquals(CustomsInfo::CUSTOM_INFO_PARCEL_RETURN_INSTRUCTION_RTS, $customs_info->getParcelReturnInstructions());
     $this->assertTrue($customs_info->getPrivateAddress());
     $receiver = $destination->getReceiver();
     $this->assertInstanceOf(Receiver::class, $receiver);
@@ -111,4 +100,5 @@ class HomeDeliveryServiceTest extends BpostKernelTestBase {
     $this->assertEquals($expected['address_line1'], $address->getStreetName());
     $this->assertEquals($expected['postal_code'], $address->getPostalCode());
   }
+
 }

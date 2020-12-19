@@ -2,20 +2,21 @@
 
 namespace Drupal\commerce_bpost_pickup\Plugin\BpostService;
 
+use Box\AtBpost;
+use Box\At247;
+use Geo6\Poi;
 use Bpost\BpostApiClient\Bpost\Order\Box;
 use Bpost\BpostApiClient\Bpost\Order\Box\National\Unregistered;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\ParcelsDepotAddress;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
-use Bpost\BpostApiClient\Geo6;
 use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
 use Drupal\commerce\AjaxFormTrait;
 use Drupal\commerce_bpost\BpostServicePluginBase;
 use Drupal\commerce_bpost\Exception\BpostCheckoutException;
 use Drupal\commerce_bpost_pickup\PickupPointManager;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_price\Price;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\commerce_shipping\OrderShipmentSummaryInterface;
 use Drupal\commerce_shipping\PackerManagerInterface;
@@ -54,6 +55,9 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
    */
   protected $leafletService;
 
+  /**
+   *
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, ShipmentManagerInterface $shipmentManager, OrderShipmentSummaryInterface $shipmentSummary, PackerManagerInterface $packerManager, LeafletService $leafletService, PickupPointManager $pointManager, CountryRepositoryInterface $countryRepository) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entityTypeManager, $shipmentManager, $shipmentSummary, $packerManager, $countryRepository);
     $this->leafletService = $leafletService;
@@ -101,7 +105,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     $shipping_profile = $shipment->getShippingProfile();
 
     $details = $this->getPointDetails($shipping_profile);
-    if (!$details instanceof Geo6\Poi) {
+    if (!$details instanceof Poi) {
       return NULL;
     }
 
@@ -138,12 +142,12 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
 
     if ($product === Product::PRODUCT_NAME_BPACK_24_7) {
       // For parcel distributors.
-      $destination = new Box\At247();
+      $destination = new At247();
       $address = new ParcelsDepotAddress();
     }
     else {
-      // For BPost post offices or post points,
-      $destination = new Box\AtBpost();
+      // For BPost post offices or post points,.
+      $destination = new AtBpost();
       $address = new PugoAddress();
     }
 
@@ -162,7 +166,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     $address->setLocality($point_details->getCity());
     $address->setCountryCode('BE');
 
-    if ($destination instanceof Box\AtBpost) {
+    if ($destination instanceof AtBpost) {
       $destination->setPugoId($point_details->getId());
       $destination->setPugoName($point_details->getOffice());
       $destination->setPugoAddress($address);
@@ -170,7 +174,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
       $option->setEmailAddress($order->getCustomer()->getEmail());
       $destination->addOption($option);
     }
-    if ($destination instanceof Box\At247) {
+    if ($destination instanceof At247) {
       $destination->setParcelsDepotId($point_details->getId());
       $destination->setParcelsDepotName($point_details->getOffice());
       $destination->setParcelsDepotAddress($address);
@@ -280,12 +284,12 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
         '#type' => 'container',
         '#attributes' => [
           'class' => ['pickup-point-grid'],
-        ]
+        ],
       ];
 
       if (!$points) {
         $pane_form['grid']['no_points'] = [
-          '#markup' => $this->t('No pickup points have been found for that postal code. Please try again.')
+          '#markup' => $this->t('No pickup points have been found for that postal code. Please try again.'),
         ];
 
         return $pane_form;
@@ -295,14 +299,14 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
         '#type' => 'container',
         '#attributes' => [
           'class' => ['pickup-point-grid--left'],
-        ]
+        ],
       ];
 
       $pane_form['grid']['list_wrapper'] = [
         '#type' => 'container',
         '#attributes' => [
           'class' => ['pickup-point-grid--right'],
-        ]
+        ],
       ];
 
       $features = [];
@@ -324,28 +328,28 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
               'x' => '20px',
               'y' => '20px',
             ],
-            'html' => '<i class="leaflet-marker-icon" data-poi-id="' . $poi->getId() .'"></i>',
+            'html' => '<i class="leaflet-marker-icon" data-poi-id="' . $poi->getId() . '"></i>',
           ],
         ];
 
         $classes = ['bpost-poi-link'];
-        if ($selected_point_details instanceof Geo6\Poi && $poi->getId() === $selected_point_details->getId()) {
+        if ($selected_point_details instanceof Poi && $poi->getId() === $selected_point_details->getId()) {
           $classes[] = 'selected-poi';
         }
 
         $list[] = [
           '#type' => 'link',
-          '#url' => Url::fromRoute('<current>',[], ['attributes' => ['class' => $classes, 'data-poi-id' => $poi->getId(), 'data-poi-lat' => $poi->getLatitude(), 'data-poi-lon' => $poi->getLongitude()]]),
+          '#url' => Url::fromRoute('<current>', [], ['attributes' => ['class' => $classes, 'data-poi-id' => $poi->getId(), 'data-poi-lat' => $poi->getLatitude(), 'data-poi-lon' => $poi->getLongitude()]]),
           '#title' => $poi->getOffice(),
         ];
 
         $radios[$poi->getId()] = [
           '#type' => 'hidden',
-          '#default_value' => $selected_point_details instanceof Geo6\Poi && $selected_point_details->getId() == $poi->getId() ? 1 : 0,
+          '#default_value' => $selected_point_details instanceof Poi && $selected_point_details->getId() == $poi->getId() ? 1 : 0,
           '#attributes' => [
             'data-poi-id' => $poi->getId(),
-            'class' => ['poi-input']
-          ]
+            'class' => ['poi-input'],
+          ],
         ];
 
         $point_details[$poi->getId()] = [
@@ -359,11 +363,11 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
 
       $form_state->set('point_details', $point_details);
 
-      $center_point = $selected_point_details instanceof Geo6\Poi ? $selected_point_details : $points[0]['poi'];
+      $center_point = $selected_point_details instanceof Poi ? $selected_point_details : $points[0]['poi'];
       $info = leaflet_map_get_info('OSM Mapnik');
       $info['id'] = 'bpost-map';
       $info['settings']['map_position_force'] = 1;
-      $info['settings']['zoom'] = $selected_point_details instanceof Geo6\Poi ? 17 : 15;
+      $info['settings']['zoom'] = $selected_point_details instanceof Poi ? 17 : 15;
       $info['settings']['zoomFiner'] = 0;
       $info['settings']['minZoom'] = 1;
       $info['settings']['maxZoom'] = 20;
@@ -376,10 +380,10 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
         '#type' => 'container',
         '#attributes' => [
           'class' => ['selected-pickup-point'],
-        ]
+        ],
       ];
 
-      if ($selected_point_details instanceof Geo6\Poi) {
+      if ($selected_point_details instanceof Poi) {
         $pane_form['grid']['map_wrapper']['selection'][] = [
           '#markup' => '<p>' . $this->t('Your selection: ') . '</p>',
         ];
@@ -399,19 +403,19 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
         '#items' => $list,
         '#attributes' => [
           'class' => [
-            'bpost-pickup-point-list'
+            'bpost-pickup-point-list',
           ],
         ],
         '#attached' => [
           'library' => [
-            'commerce_bpost_pickup/bpost_map'
+            'commerce_bpost_pickup/bpost_map',
           ],
           'drupalSettings' => [
             'commerce_bpost_pickup' => [
               'pickup_point_details' => $point_details,
             ],
           ],
-        ]
+        ],
       ];
 
       $pane_form['list_wrapper']['radios'] = $radios;
@@ -479,7 +483,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
   public function buildPaneSummary(OrderInterface $order) {
     $summary = [];
 
-    $shipping_profile = $this->getShippingProfileFromOrder($order);;
+    $shipping_profile = $this->getShippingProfileFromOrder($order);
 
     if (!$shipping_profile) {
       return $summary;
@@ -491,7 +495,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     }
 
     $summary[] = [
-      '#markup' => $this->t('Shipping to pickup point: <strong>@point</strong>.', ['@point' => $details->getOffice()])
+      '#markup' => $this->t('Shipping to pickup point: <strong>@point</strong>.', ['@point' => $details->getOffice()]),
     ];
 
     return $summary;
@@ -640,7 +644,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     }
 
     $details = $this->getSelectedPointDetails($order, $form_state);
-    return $details instanceof Geo6\Poi ? $details->getZip() : NULL;
+    return $details instanceof Poi ? $details->getZip() : NULL;
   }
 
   /**

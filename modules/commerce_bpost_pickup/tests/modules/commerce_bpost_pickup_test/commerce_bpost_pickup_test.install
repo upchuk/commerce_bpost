@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Implements hook_install().
  */
 function commerce_bpost_pickup_test_install() {
@@ -11,7 +15,7 @@ function commerce_bpost_pickup_test_install() {
   $config['services'][] = 'pickup_point';
   $config['service_configuration']['pickup_point']['rate_amounts']['national'] = [
     '0_2000' => ['number' => '14', 'currency_code' => 'EUR'],
-    '2001_5000' => ['number' => '19', 'currency_code' => 'EUR']
+    '2001_5000' => ['number' => '19', 'currency_code' => 'EUR'],
   ];
   $config['service_configuration']['pickup_point']['supports_international'] = '0';
   $method->set('plugin', [

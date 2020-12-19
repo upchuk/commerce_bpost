@@ -12,7 +12,6 @@ use Drupal\commerce_shipping\PackerManagerInterface;
 use Drupal\commerce_shipping\ShipmentManagerInterface;
 use Drupal\commerce_shipping\ShippingRate;
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -163,7 +162,7 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
         '#title' => $this->t('@start grams to @end grams', ['@start' => $start, '@end' => $end]),
         '#available_currencies' => ['EUR'],
         '#default_value' => $amounts['national'][$segment] ?? NULL,
-        '#suffix' => '<br />'
+        '#suffix' => '<br />',
       ];
     }
 
@@ -205,11 +204,10 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
           '#title' => $this->t('@start grams to @end grams', ['@start' => $start, '@end' => $end]),
           '#available_currencies' => ['EUR'],
           '#default_value' => $amounts['international'][$country_code][$segment] ?? NULL,
-          '#suffix' => '<br />'
+          '#suffix' => '<br />',
         ];
       }
     }
-
 
     return $form;
   }
@@ -327,7 +325,7 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * @param \Drupal\physical\Weight $weight
    * @param array $rate_amounts
    *
-   * @return Price
+   * @return \Drupal\commerce_price\Price
    *   The price.
    */
   protected function determinePriceFromWeightSegment(Weight $weight, array $rate_amounts) {
@@ -356,7 +354,6 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * profile would not be appropriate anymore.
    *
    * @param \Drupal\commerce_order\Entity\OrderInterface $order
-   *
    */
   protected function clearShippingProfile(OrderInterface $order) {
     /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */

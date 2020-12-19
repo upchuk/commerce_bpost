@@ -43,7 +43,7 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
     $this->assertEquals([
       'home_delivery' => 'Home delivery',
       'pickup_point' => 'Pickup point',
-      '' => 'Select'
+      '' => 'Select',
     ], $this->getSelectOptions($this->getSession()->getPage()->findField('Please select your delivery choice')));
     $this->getSession()->getPage()->selectFieldOption('Please select your delivery choice', 'Pickup point');
     $this->assertSession()->assertWaitOnAjaxRequest();
@@ -185,7 +185,7 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
    *   The expected price.
    */
   public function testPickupPointShippingPrice($weight, $price) {
-    $product = $this->createProduct(10, NULL,  ['number' => $weight, 'unit' => 'g']);
+    $product = $this->createProduct(10, NULL, ['number' => $weight, 'unit' => 'g']);
     $this->markEntityForCleanup($product);
 
     $user = $this->createUser();
@@ -217,7 +217,7 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
     $orders = \Drupal::entityTypeManager()->getStorage('commerce_order')->loadByProperties(['mail' => $user->getEmail()]);
     /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
     $order = reset($orders);
-    /** @var ShipmentInterface $shipment */
+    /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */
     $shipment = $order->get('shipments')->entity;
     $this->assertInstanceOf(ShipmentInterface::class, $shipment);
     $this->assertEquals($price, Calculator::trim($shipment->getAmount()->getNumber()));
@@ -267,4 +267,5 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
 
     return $this->getSession()->evaluateScript($js);
   }
+
 }

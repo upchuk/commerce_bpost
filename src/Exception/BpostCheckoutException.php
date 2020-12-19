@@ -27,4 +27,5 @@ class BpostCheckoutException extends BpostException {
   public function setOrder(OrderInterface $order): void {
     $this->order = $order;
   }
+
 }

@@ -3,13 +3,7 @@
 namespace Drupal\commerce_bpost\EventSubscriber;
 
 use Bpost\BpostApiClient\Bpost\Order;
-use Bpost\BpostApiClient\Bpost\Order\Address;
-use Bpost\BpostApiClient\Bpost\Order\Box;
-use Bpost\BpostApiClient\Bpost\Order\Box\AtHome;
-use Bpost\BpostApiClient\Bpost\Order\Box\International;
 use Bpost\BpostApiClient\Bpost\Order\Line;
-use Bpost\BpostApiClient\Bpost\Order\Receiver;
-use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Drupal\commerce_bpost\Exception\BpostCheckoutException;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\commerce_shipping\ShippingOrderManagerInterface;
@@ -62,7 +56,6 @@ class OrderSubscriber implements EventSubscriberInterface {
     if ($to_state->getId() != 'fulfillment' || !$this->shippingOrderManager->hasShipments($order)) {
       return;
     }
-
 
     /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface[] $shipments */
     $shipments = $order->get('shipments')->referencedEntities();
@@ -125,4 +118,5 @@ class OrderSubscriber implements EventSubscriberInterface {
       }
     }
   }
+
 }

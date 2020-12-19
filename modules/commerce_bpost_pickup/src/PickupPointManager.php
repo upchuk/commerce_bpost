@@ -90,7 +90,7 @@ class PickupPointManager {
    * @param $point_type
    *   The point type.
    *
-   * @return \Bpost\BpostApiClient\Geo6\Poi|NULL
+   * @return \Bpost\BpostApiClient\Geo6\Poi|null
    */
   public function getPointDetails($point_id, $point_type) {
     $cid = 'point:' . $point_id . '_' . $point_type;
@@ -126,4 +126,5 @@ class PickupPointManager {
 
     return $language;
   }
+
 }

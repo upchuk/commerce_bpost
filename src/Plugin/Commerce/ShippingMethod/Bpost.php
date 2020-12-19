@@ -20,7 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *  label = @Translation("BPost")
  * )
  */
-
 class Bpost extends ShippingMethodBase {
 
   /**
@@ -67,7 +66,7 @@ class Bpost extends ShippingMethodBase {
     2001 => 5000,
     5001 => 10000,
     10001 => 20000,
-    20001 => 30000
+    20001 => 30000,
   ];
 
   /**
@@ -138,7 +137,7 @@ class Bpost extends ShippingMethodBase {
     $stores = !$shipping_method->isNew() ? $shipping_method->getStores() : [$this->storeResolver->resolve()];
     if (!$stores) {
       $form['message'] = [
-        '#markup' => $this->t('Please configure at least one store on your site.')
+        '#markup' => $this->t('Please configure at least one store on your site.'),
       ];
     }
     foreach ($stores as $store) {
@@ -148,7 +147,7 @@ class Bpost extends ShippingMethodBase {
 
     if (!$shipping_countries) {
       $form['message'] = [
-        '#markup' => $this->t('Please specify which countries your store can ship to.')
+        '#markup' => $this->t('Please specify which countries your store can ship to.'),
       ];
 
       $form_state->set('no_shipping_countries', TRUE);
@@ -158,7 +157,7 @@ class Bpost extends ShippingMethodBase {
 
     if (!in_array('BE', $shipping_countries)) {
       $form['message'] = [
-        '#markup' => $this->t('Please include Belgium in the list of countries your store can ship to.')
+        '#markup' => $this->t('Please include Belgium in the list of countries your store can ship to.'),
       ];
 
       $form_state->set('belgium_missing_shipping_countries', TRUE);
@@ -205,7 +204,7 @@ class Bpost extends ShippingMethodBase {
     foreach ($definitions as $id => $definition) {
       $form['rate_amounts_wrapper'][$id] = [
         '#type' => 'fieldset',
-        '#title' => $this->t('Rate amounts for @label', ['@label' => $definition['label']])
+        '#title' => $this->t('Rate amounts for @label', ['@label' => $definition['label']]),
       ];
 
       $form['rate_amounts_wrapper'][$id]['configuration'] = [

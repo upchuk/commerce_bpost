@@ -13,7 +13,7 @@ use weitzman\DrupalTestTraits\ExistingSiteSelenium2DriverTestBase;
 /**
  * Base class for existing site JS tests.
  */
-class BpostExistingSiteJavascriptBase  extends ExistingSiteSelenium2DriverTestBase {
+class BpostExistingSiteJavascriptBase extends ExistingSiteSelenium2DriverTestBase {
 
   use EntityManagerTrait;
   use ExistingSiteCleanupTrait;
@@ -133,4 +133,5 @@ class BpostExistingSiteJavascriptBase  extends ExistingSiteSelenium2DriverTestBa
         throw new \LogicException('This database driver is not supported yet.');
     }
   }
+
 }

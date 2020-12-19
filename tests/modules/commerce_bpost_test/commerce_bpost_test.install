@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Test module install file for Commerce Bpost.
+ */
+
 use Drupal\commerce_checkout\Entity\CheckoutFlow;
 use Drupal\commerce_order\Entity\OrderType;
 use Drupal\commerce_product\Entity\ProductVariationType;
@@ -70,7 +75,7 @@ function commerce_bpost_test_install() {
     'plugin' => [
       'target_plugin_id' => 'bpost',
       'target_plugin_configuration' => json_decode(file_get_contents(drupal_get_path('module', 'commerce_bpost_test') . '/default_shipping_method_config.json'), TRUE),
-    ]
+    ],
   ]);
 
   $method->save();

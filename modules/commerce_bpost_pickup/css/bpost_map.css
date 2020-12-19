@@ -13,7 +13,8 @@
   display: block;
 }
 
-.pickup-point-grid--left, .pickup-point-grid--right {
+.pickup-point-grid--left,
+.pickup-point-grid--right {
   width: 100%;
   margin-bottom: 20px;
 }

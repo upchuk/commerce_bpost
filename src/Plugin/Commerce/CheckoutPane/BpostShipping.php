@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\commerce_bpost\Plugin\Commerce\CheckoutPane;
 
 use Drupal\commerce_shipping\Plugin\Commerce\CheckoutPane\ShippingInformation;
@@ -71,7 +70,7 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
     $shipping_method = $this->getShippingMethod();
     if (!$shipping_method) {
       $pane_form['message'] = [
-        '#markup' => $this->t('There are no Bpost shipping methods configured.')
+        '#markup' => $this->t('There are no Bpost shipping methods configured.'),
       ];
 
       return $pane_form;
@@ -90,7 +89,7 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
     if (count($options) === 1) {
       $pane_form['bpost_services'] = [
         '#type' => 'value',
-        '#value' => $service->getId()
+        '#value' => $service->getId(),
       ];
 
       $form_state->setValue(['bpost_shipping', 'bpost_services'], $service->getId());
@@ -232,6 +231,5 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
 
     return reset($shipping_methods);
   }
-
 
 }

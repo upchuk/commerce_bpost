@@ -4,13 +4,10 @@ namespace Drupal\commerce_bpost;
 
 use Drupal\commerce\Plugin\Commerce\Condition\ParentEntityAwareInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_shipping\Entity\Shipment;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
-use Drupal\commerce_shipping\Plugin\Commerce\ShippingMethod\ShippingMethodInterface;
 use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Interface for BPost service plugins.
@@ -48,7 +45,7 @@ interface BpostServiceInterface extends ConfigurableInterface, PluginFormInterfa
    * Builds elements for the checkout pane form specific to this service.
    *
    * @param array $pane_form
-   *  The pane form.
+   *   The pane form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    * @param array $complete_form
@@ -63,7 +60,7 @@ interface BpostServiceInterface extends ConfigurableInterface, PluginFormInterfa
    * Runs validation on the checkout pane form elements.
    *
    * @param array $pane_form
-   *  The pane form.
+   *   The pane form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    * @param array $complete_form
@@ -75,7 +72,7 @@ interface BpostServiceInterface extends ConfigurableInterface, PluginFormInterfa
    * Submit callback for the checkout pane form elements.
    *
    * @param array $pane_form
-   *  The pane form.
+   *   The pane form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    * @param array $complete_form
@@ -97,7 +94,7 @@ interface BpostServiceInterface extends ConfigurableInterface, PluginFormInterfa
   /**
    * Prepares the box object to be dispatched.
    *
-   * @param ShipmentInterface $shipment
+   * @param \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment
    *
    * @return \TijsVerkoyen\Bpost\Bpost\Order\Box
    */

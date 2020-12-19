@@ -17,4 +17,5 @@ class CommerceBpostPickupTestServiceProvider extends ServiceProviderBase {
     $definition = $container->getDefinition('commerce_bpost_pickup.points_manager');
     $definition->setClass(TestPickupPointManager::class);
   }
+
 }
