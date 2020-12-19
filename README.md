@@ -42,6 +42,7 @@ To set up a local development environment, perform the following:
 $ docker-compose up -d
 $ docker-compose exec php composer install
 $ docker-compose exec php ./vendor/bin/run drupal:site-install
+$ docker-compose exec php ./vendor/bin/run drupal:testing-setup
 $ docker-compose exec -u www-data php ./vendor/bin/drush sql-dump --result-file=sites/default/files/test.sql
 ```
 
