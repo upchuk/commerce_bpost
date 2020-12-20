@@ -88,17 +88,4 @@ class HomeDeliveryServiceTest extends BpostKernelTestBase {
     $this->assertAddress($address, $this->internationalAddress);
   }
 
-  /**
-   * Asserts that an API address object contains the correct values.
-   *
-   * @param \Bpost\BpostApiClient\Bpost\Order\Address $address
-   * @param array $expected
-   */
-  protected function assertAddress(Address $address, array $expected) {
-    $this->assertEquals($expected['country_code'], $address->getCountryCode());
-    $this->assertEquals($expected['locality'], $address->getLocality());
-    $this->assertEquals($expected['address_line1'], $address->getStreetName());
-    $this->assertEquals($expected['postal_code'], $address->getPostalCode());
-  }
-
 }

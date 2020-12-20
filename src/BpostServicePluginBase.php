@@ -32,31 +32,43 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
   use DependencySerializationTrait;
 
   /**
+   * The parent entity.
+   *
    * @var \Drupal\commerce_shipping\Entity\ShippingMethodInterface
    */
   protected $parentEntity;
 
   /**
-   * @var \Drupal\commerce_shipping\ShipmentManagerInterface
-   */
-  protected $shipmentManager;
-
-  /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The shipment manager.
+   *
+   * @var \Drupal\commerce_shipping\ShipmentManagerInterface
+   */
+  protected $shipmentManager;
+
+  /**
+   * The shipment summary service.
+   *
    * @var \Drupal\commerce_shipping\OrderShipmentSummaryInterface
    */
   protected $shipmentSummary;
 
   /**
+   * The packer manager.
+   *
    * @var \Drupal\commerce_shipping\PackerManagerInterface
    */
   protected $packerManager;
 
   /**
+   * The country repository.
+   *
    * @var \CommerceGuys\Addressing\Country\CountryRepositoryInterface
    */
   protected $countryRepository;
@@ -70,20 +82,25 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   * @param \Drupal\commerce_shipping\ShipmentManagerInterface $shipmentManager
-   * @param \Drupal\commerce_shipping\OrderShipmentSummaryInterface $shipmentSummary
-   * @param \Drupal\commerce_shipping\PackerManagerInterface $packerManager
-   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $countryRepository
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\commerce_shipping\ShipmentManagerInterface $shipment_manager
+   *   The shipment manager.
+   * @param \Drupal\commerce_shipping\OrderShipmentSummaryInterface $shipment_summary
+   *   The shipment summary service.
+   * @param \Drupal\commerce_shipping\PackerManagerInterface $packer_manager
+   *   The packer manager.
+   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $country_repository
+   *   The country repository.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, ShipmentManagerInterface $shipmentManager, OrderShipmentSummaryInterface $shipmentSummary, PackerManagerInterface $packerManager, CountryRepositoryInterface $countryRepository) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ShipmentManagerInterface $shipment_manager, OrderShipmentSummaryInterface $shipment_summary, PackerManagerInterface $packer_manager, CountryRepositoryInterface $country_repository) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->setConfiguration($configuration);
-    $this->entityTypeManager = $entityTypeManager;
-    $this->shipmentManager = $shipmentManager;
-    $this->shipmentSummary = $shipmentSummary;
-    $this->packerManager = $packerManager;
-    $this->countryRepository = $countryRepository;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->shipmentManager = $shipment_manager;
+    $this->shipmentSummary = $shipment_summary;
+    $this->packerManager = $packer_manager;
+    $this->countryRepository = $country_repository;
   }
 
   /**
@@ -132,7 +149,7 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function defaultConfiguration() {
     return [
@@ -159,7 +176,10 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
 
       $form['national'][$segment] = [
         '#type' => 'commerce_price',
-        '#title' => $this->t('@start grams to @end grams', ['@start' => $start, '@end' => $end]),
+        '#title' => $this->t('@start grams to @end grams', [
+          '@start' => $start,
+          '@end' => $end,
+        ]),
         '#available_currencies' => ['EUR'],
         '#default_value' => $amounts['national'][$segment] ?? NULL,
         '#suffix' => '<br />',
@@ -201,7 +221,10 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
 
         $form['international'][$country_code][$segment] = [
           '#type' => 'commerce_price',
-          '#title' => $this->t('@start grams to @end grams', ['@start' => $start, '@end' => $end]),
+          '#title' => $this->t('@start grams to @end grams', [
+            '@start' => $start,
+            '@end' => $end,
+          ]),
           '#available_currencies' => ['EUR'],
           '#default_value' => $amounts['international'][$country_code][$segment] ?? NULL,
           '#suffix' => '<br />',
@@ -295,8 +318,10 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * Calculates the rates for a national shipment.
    *
    * @param \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment
+   *   The shipment.
    *
    * @return array
+   *   The rates.
    */
   protected function calculateNationalRates(ShipmentInterface $shipment) {
     $rates = [];
@@ -323,7 +348,9 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * Fishes out the rate based on the weight segment.
    *
    * @param \Drupal\physical\Weight $weight
+   *   The weight.
    * @param array $rate_amounts
+   *   The available rate amounts.
    *
    * @return \Drupal\commerce_price\Price
    *   The price.
@@ -354,6 +381,7 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * profile would not be appropriate anymore.
    *
    * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   The order.
    */
   protected function clearShippingProfile(OrderInterface $order) {
     /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */
@@ -371,8 +399,10 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * This includes only the applicable type (bundle) of shipping profile.
    *
    * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   The order.
    *
    * @return \Drupal\profile\Entity\ProfileInterface|null
+   *   The shipping profile.
    */
   protected function getShippingProfileFromOrder(OrderInterface $order) {
     /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */
@@ -390,11 +420,12 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * Returns the shipping profile bundle this service uses.
    *
    * @return string
+   *   The shipping profile bundle.
    */
   abstract protected function getApplicableShippingProfileBundle();
 
   /**
-   * Returns the exact Bpost product type to use for this shipment.
+   * Returns the exact BPost product type to use for this shipment.
    *
    * The shipment is already expected to use the current service, but within
    * each service plugin, there can be different types of more specific BPost
@@ -404,6 +435,7 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    *   The shipment.
    *
    * @return string
+   *   The BPost product.
    */
   abstract protected function getBpostProduct(ShipmentInterface $shipment);
 

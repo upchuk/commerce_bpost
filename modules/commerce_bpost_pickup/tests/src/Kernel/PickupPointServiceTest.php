@@ -106,7 +106,7 @@ class PickupPointServiceTest extends BpostKernelTestBase {
     $options = $destination->getOptions();
     $this->assertCount(1, $options);
     $option = reset($options);
-    $this->assertInstanceOf(Box\Option\Messaging::class, $option);
+    $this->assertInstanceOf(Messaging::class, $option);
     $this->assertEquals(Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED, $option->getType());
     $this->assertEquals('EN', $option->getLanguage());
     $this->assertEquals($this->order->getCustomer()->getEmail(), $option->getEmailAddress());

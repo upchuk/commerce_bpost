@@ -33,16 +33,37 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class HomeDelivery extends BpostServicePluginBase {
 
   /**
+   * The inline form manager.
+   *
    * @var \Drupal\commerce\InlineFormManager
    */
   protected $inlineFormManager;
 
   /**
+   * HomeDelivery constructor.
    *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\commerce_shipping\ShipmentManagerInterface $shipment_manager
+   *   The shipment manager.
+   * @param \Drupal\commerce_shipping\OrderShipmentSummaryInterface $shipment_summary
+   *   The shipment summary service.
+   * @param \Drupal\commerce_shipping\PackerManagerInterface $packer_manager
+   *   The packer manager.
+   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $country_repository
+   *   The country repository.
+   * @param \Drupal\commerce\InlineFormManager $inline_form_manager
+   *   The inline form manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, ShipmentManagerInterface $shipmentManager, OrderShipmentSummaryInterface $shipmentSummary, PackerManagerInterface $packerManager, InlineFormManager $inlineFormManager, CountryRepositoryInterface $countryRepository) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entityTypeManager, $shipmentManager, $shipmentSummary, $packerManager, $countryRepository);
-    $this->inlineFormManager = $inlineFormManager;
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ShipmentManagerInterface $shipment_manager, OrderShipmentSummaryInterface $shipment_summary, PackerManagerInterface $packer_manager, CountryRepositoryInterface $country_repository, InlineFormManager $inline_form_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $shipment_manager, $shipment_summary, $packer_manager, $country_repository);
+    $this->inlineFormManager = $inline_form_manager;
   }
 
   /**
@@ -57,8 +78,8 @@ class HomeDelivery extends BpostServicePluginBase {
       $container->get('commerce_shipping.shipment_manager'),
       $container->get('commerce_shipping.order_shipment_summary'),
       $container->get('commerce_shipping.packer_manager'),
-      $container->get('plugin.manager.commerce_inline_form'),
-      $container->get('address.country_repository')
+      $container->get('address.country_repository'),
+      $container->get('plugin.manager.commerce_inline_form')
     );
   }
 
@@ -178,7 +199,10 @@ class HomeDelivery extends BpostServicePluginBase {
     // Override the available countries in the address depending on whether
     // we have international rates configured for that country.
     if (isset($pane_form['shipping_profile']['address']) && isset($pane_form['shipping_profile']['address']['widget'])) {
-      $pane_form['shipping_profile']['#process'][] = [$this, 'processAvailableCountries'];
+      $pane_form['shipping_profile']['#process'][] = [
+        $this,
+        'processAvailableCountries',
+      ];
     }
 
     return $pane_form;
@@ -188,10 +212,14 @@ class HomeDelivery extends BpostServicePluginBase {
    * Removes the available countries if there are not rates for international.
    *
    * @param array $element
+   *   The element.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    * @param array $complete_form
+   *   The complete form.
    *
    * @return array
+   *   The processed element.
    */
   public function processAvailableCountries(array $element, FormStateInterface $form_state, array &$complete_form) {
     $countries = &$element['address']['widget'][0]['address']['#available_countries'];

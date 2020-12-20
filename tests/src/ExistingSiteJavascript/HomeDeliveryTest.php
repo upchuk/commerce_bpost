@@ -133,7 +133,7 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
    * @dataProvider providerShippingPrices
    */
   public function testHomeDeliveryShippingPrice($weight, $country, $price) {
-    $product = $this->createProduct(10, NULL, [
+    $product = $this->createProduct(10, [], [
       'number' => $weight,
       'unit' => 'g',
     ]);
@@ -181,11 +181,11 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
    */
   public function providerShippingPrices() {
     return [
-      ['1000', 'Belgium', 10],
-      ['3000', 'Belgium', 20],
-      ['100', 'France', 15],
-      ['400', 'France', 25],
-     ['400', 'Italy', 45],
+      [1000, 'Belgium', 10],
+      [3000, 'Belgium', 20],
+      [100, 'France', 15],
+      [400, 'France', 25],
+     [400, 'Italy', 45],
     ];
   }
 

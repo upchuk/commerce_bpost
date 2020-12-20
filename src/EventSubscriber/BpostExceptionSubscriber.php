@@ -5,7 +5,7 @@ namespace Drupal\commerce_bpost\EventSubscriber;
 use Drupal\commerce_bpost\Exception\BpostCheckoutException;
 use Drupal\commerce_bpost\Exception\BpostException;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\Error;
@@ -22,11 +22,15 @@ class BpostExceptionSubscriber implements EventSubscriberInterface {
   use StringTranslationTrait;
 
   /**
+   * The logger.
+   *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
   protected $logger;
 
   /**
+   * The messenger.
+   *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
@@ -35,8 +39,11 @@ class BpostExceptionSubscriber implements EventSubscriberInterface {
    * BpostExceptionSubscriber constructor.
    *
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
+   *   The logger channel factory.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory, Messenger $messenger) {
+  public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory, MessengerInterface $messenger) {
     $this->logger = $loggerChannelFactory->get('commerce_bpost');
     $this->messenger = $messenger;
   }
@@ -63,12 +70,14 @@ class BpostExceptionSubscriber implements EventSubscriberInterface {
       $this->logException($exception);
       $this->messenger->addError($this->t('There was a problem with placing the order. Please contact the site administrator.'));
       $order = $exception->getOrder();
-      $url = Url::fromRoute('commerce_checkout.form', ['commerce_order' => $order->id(), 'step' => 'review'])->toString();
+      $url = Url::fromRoute('commerce_checkout.form', [
+        'commerce_order' => $order->id(),
+        'step' => 'review',
+      ])->toString();
       $response = new RedirectResponse($url);
       $event->setResponse($response);
       return;
     }
-
   }
 
   /**
@@ -83,6 +92,7 @@ class BpostExceptionSubscriber implements EventSubscriberInterface {
    * Logs the exception message and values.
    *
    * @param \Drupal\commerce_bpost\Exception\BpostException $exception
+   *   The exception.
    */
   protected function logException(BpostException $exception) {
     $error = Error::renderExceptionSafe($exception);

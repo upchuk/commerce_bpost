@@ -2,14 +2,14 @@
 
 namespace Drupal\commerce_bpost_pickup_test;
 
-use Drupal\commerce_bpost_pickup\PickupPointManager;
+use Drupal\commerce_bpost_pickup\PickupPointManagerInterface;
 
 /**
  * Mock for the pickup point manager.
  *
  * Returns local results for when calling for pickup point data.
  */
-class TestPickupPointManager extends PickupPointManager {
+class TestPickupPointManager implements PickupPointManagerInterface {
 
   /**
    * {@inheritdoc}

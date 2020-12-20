@@ -95,8 +95,10 @@ interface BpostServiceInterface extends ConfigurableInterface, PluginFormInterfa
    * Prepares the box object to be dispatched.
    *
    * @param \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment
+   *   The shipment.
    *
    * @return \TijsVerkoyen\Bpost\Bpost\Order\Box
+   *   The box object.
    */
   public function prepareDeliveryBox(ShipmentInterface $shipment);
 

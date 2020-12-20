@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies: {  }
 id: bpost_pickup_point
-label: 'Bpost Pickup Point'
+label: 'BPost Pickup Point'
 display_label: 'Pickup point'
 multiple: false
 registration: false

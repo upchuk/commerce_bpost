@@ -28,7 +28,7 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
   protected $user;
 
   /**
-   *  A test order.
+   * A test order.
    *
    * @var \Drupal\commerce_order\Entity\OrderInterface
    */

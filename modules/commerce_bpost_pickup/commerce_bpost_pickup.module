@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Commerce Bpost Pickup point module file.
  */
 
 use Drupal\Core\Access\AccessResult;

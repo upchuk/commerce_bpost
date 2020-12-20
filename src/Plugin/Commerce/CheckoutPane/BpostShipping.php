@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
 /**
- * Provides the shipping pane for using Bpost.
+ * Provides the shipping pane for using BPost.
  *
  * @CommerceCheckoutPane(
  *   id = "bpost_shipping",
@@ -65,12 +65,12 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
    * {@inheritdoc}
    */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
-    // First, check if there are any shipping methods configured to use the Bpost
-    // shipping services.
+    // First, check if there are any shipping methods configured to use the
+    // BPost shipping services.
     $shipping_method = $this->getShippingMethod();
     if (!$shipping_method) {
       $pane_form['message'] = [
-        '#markup' => $this->t('There are no Bpost shipping methods configured.'),
+        '#markup' => $this->t('There are no BPost shipping methods configured.'),
       ];
 
       return $pane_form;
@@ -119,6 +119,16 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
 
   /**
    * Builds the specific pane for the chosen service.
+   *
+   * @param array $pane_form
+   *   The pane form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param array $complete_form
+   *   The complete form.
+   *
+   * @return array
+   *   The service pane.
    */
   protected function buildPaneForService(array $pane_form, FormStateInterface $form_state, array $complete_form) {
     $service = $this->getSelectedShippingService($form_state);
@@ -147,7 +157,11 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
       return;
     }
 
-    $selected_service = $form_state->getValue(['bpost_shipping', 'bpost_services']);
+    $selected_service = $form_state->getValue([
+      'bpost_shipping',
+      'bpost_services',
+    ]);
+
     if (!$selected_service) {
       $form_state->setError($pane_form['bpost_services'], $this->t('Please select a delivery type.'));
       return;
@@ -167,7 +181,10 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
    * {@inheritdoc}
    */
   public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
-    $selected_service = $form_state->getValue(['bpost_shipping', 'bpost_services']);
+    $selected_service = $form_state->getValue([
+      'bpost_shipping',
+      'bpost_services',
+    ]);
 
     /** @var \Drupal\commerce_bpost\BpostServiceInterface $service_plugin */
     $service_plugin = $this->getShippingMethod()->getPlugin()->instantiateServicePlugin($selected_service);
@@ -185,11 +202,16 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
    * This service can be overridden by the Ajax selection.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    *
-   * @return mixed|string|null
+   * @return string|null
+   *   The shipping service.
    */
   protected function getSelectedShippingService(FormStateInterface $form_state) {
-    $selected_service = $form_state->getValue(['bpost_shipping', 'bpost_services']);
+    $selected_service = $form_state->getValue([
+      'bpost_shipping',
+      'bpost_services',
+    ]);
     if ($selected_service) {
       // Ajax choice gets priority.
       return $selected_service;
@@ -215,10 +237,11 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
    * Returns the shipping method entity that uses the BPost plugin.
    *
    * @return \Drupal\commerce_shipping\Entity\ShippingMethodInterface|null
+   *   The shipping method.
    */
   protected function getShippingMethod() {
-    // First, check if there are any shipping methods configured to use the Bpost
-    // shipping services.
+    // First, check if there are any shipping methods configured to use the
+    // BPost shipping services.
     $shipping_methods = $this->entityTypeManager->getStorage('commerce_shipping_method')->loadByProperties(['plugin__target_plugin_id' => 'bpost']);
     if (!$shipping_methods) {
       return NULL;

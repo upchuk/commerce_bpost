@@ -9,19 +9,25 @@ use Drupal\Core\Language\LanguageManagerInterface;
 /**
  * Queries and caches pickup point information from BPost.
  */
-class PickupPointManager {
+class PickupPointManager implements PickupPointManagerInterface {
 
   /**
+   * The Bpost geo6 service.
+   *
    * @var \Bpost\BpostApiClient\Geo6
    */
   protected $geo;
 
   /**
+   * The language manager.
+   *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
   protected $languageManager;
 
   /**
+   * The cache backend.
+   *
    * @var \Drupal\Core\Cache\CacheBackendInterface
    */
   protected $cache;
@@ -30,7 +36,9 @@ class PickupPointManager {
    * PickupPointManager constructor.
    *
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
+   *   The language manager.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
+   *   The cache backend.
    */
   public function __construct(LanguageManagerInterface $languageManager, CacheBackendInterface $cache) {
     $geo6Partner = '999999';
@@ -42,21 +50,7 @@ class PickupPointManager {
   }
 
   /**
-   * Gets the points closest to a postal code.
-   *
-   * @param int $postal_code
-   *   The postal code.
-   * @param int $type
-   *   Requested point type, possible values are:
-   *    - 1: Post Office
-   *    - 2: Post Point
-   *    - 3: (1+2, Post Office + Post Point)
-   *    - 4: bpack 24/7
-   *    - 7: (1+2+4, Post Office + Post Point + bpack 24/7)
-   * @param int $total
-   *   The number of points.
-   *
-   * @return array
+   * {@inheritdoc}
    */
   public function getClosestToPostalCode(int $postal_code, int $type, int $total) {
     $cid = 'close:' . $postal_code . '_' . $type . '_' . $total;
@@ -83,14 +77,7 @@ class PickupPointManager {
   }
 
   /**
-   * Returns details about a given point.
-   *
-   * @param $point_id
-   *   The point ID.
-   * @param $point_type
-   *   The point type.
-   *
-   * @return \Bpost\BpostApiClient\Geo6\Poi|null
+   * {@inheritdoc}
    */
   public function getPointDetails($point_id, $point_type) {
     $cid = 'point:' . $point_id . '_' . $point_type;

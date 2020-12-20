@@ -2,6 +2,7 @@
 
 namespace Drupal\commerce_bpost\Plugin\Commerce\ShippingMethod;
 
+use Bpost\BpostApiClient\Bpost as BpostClient;
 use Drupal\commerce_bpost\BpostServicePluginManager;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\commerce_shipping\PackageTypeManagerInterface;
@@ -23,11 +24,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Bpost extends ShippingMethodBase {
 
   /**
+   * The BPost service plugin manager.
+   *
    * @var \Drupal\commerce_bpost\BpostServicePluginManager
    */
-  protected $bpostServicePluginManager;
+  protected $bpostServiceManager;
 
   /**
+   * The store resolver.
+   *
    * @var \Drupal\commerce_store\Resolver\StoreResolverInterface
    */
   protected $storeResolver;
@@ -82,17 +87,19 @@ class Bpost extends ShippingMethodBase {
    *   The package type manager.
    * @param \Drupal\state_machine\WorkflowManagerInterface $workflow_manager
    *   The workflow manager.
-   * @param \Drupal\commerce_bpost\BpostServicePluginManager $bpostServicePluginManager
-   * @param \Drupal\commerce_store\Resolver\StoreResolverInterface $storeResolver
+   * @param \Drupal\commerce_bpost\BpostServicePluginManager $bpost_service_manager
+   *   The BPost service plugin manager.
+   * @param \Drupal\commerce_store\Resolver\StoreResolverInterface $store_resolver
+   *   The store resolver.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, PackageTypeManagerInterface $package_type_manager, WorkflowManagerInterface $workflow_manager, BpostServicePluginManager $bpostServicePluginManager, StoreResolverInterface $storeResolver) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PackageTypeManagerInterface $package_type_manager, WorkflowManagerInterface $workflow_manager, BpostServicePluginManager $bpost_service_manager, StoreResolverInterface $store_resolver) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $package_type_manager, $workflow_manager);
-    foreach ($bpostServicePluginManager->getDefinitions() as $id => $definition) {
+    foreach ($bpost_service_manager->getDefinitions() as $id => $definition) {
       $this->services[$id] = new ShippingService($id, $definition['label']);
     }
 
-    $this->bpostServicePluginManager = $bpostServicePluginManager;
-    $this->storeResolver = $storeResolver;
+    $this->bpostServiceManager = $bpost_service_manager;
+    $this->storeResolver = $store_resolver;
   }
 
   /**
@@ -167,7 +174,7 @@ class Bpost extends ShippingMethodBase {
 
     $form_state->set('shipping_countries', $shipping_countries);
 
-    $definitions = $this->bpostServicePluginManager->getDefinitions();
+    $definitions = $this->bpostServiceManager->getDefinitions();
     $configuration = $this->configuration['service_configuration'];
 
     $form['api_wrapper'] = [
@@ -251,7 +258,7 @@ class Bpost extends ShippingMethodBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function calculateRates(ShipmentInterface $shipment) {
     $rates = [];
@@ -260,7 +267,7 @@ class Bpost extends ShippingMethodBase {
     }
 
     /** @var \Drupal\commerce_bpost\BpostServiceInterface $plugin */
-    $plugin = $this->bpostServicePluginManager->createInstance($shipment->getShippingService(), $this->configuration['service_configuration'][$shipment->getShippingService()]);
+    $plugin = $this->bpostServiceManager->createInstance($shipment->getShippingService(), $this->configuration['service_configuration'][$shipment->getShippingService()]);
     $plugin->setParentEntity($this->parentEntity);
     return $plugin->calculateRates($shipment);
   }
@@ -271,13 +278,15 @@ class Bpost extends ShippingMethodBase {
    * It also passes the parent entity and the configuration from the Shipping
    * method entity,
    *
-   * @param $plugin_id
+   * @param string $plugin_id
+   *   The service plugin ID.
    *
    * @return \Drupal\commerce_bpost\BpostServiceInterface
+   *   The BPost service.
    */
-  public function instantiateServicePlugin($plugin_id) {
+  public function instantiateServicePlugin(string $plugin_id) {
     /** @var \Drupal\commerce_bpost\BpostServiceInterface $plugin */
-    $plugin = $this->bpostServicePluginManager->createInstance($plugin_id, $this->configuration['service_configuration'][$plugin_id]);
+    $plugin = $this->bpostServiceManager->createInstance($plugin_id, $this->configuration['service_configuration'][$plugin_id]);
     $plugin->setParentEntity($this->parentEntity);
     return $plugin;
   }
@@ -286,11 +295,12 @@ class Bpost extends ShippingMethodBase {
    * Instantiates a BPost API client to make requests to the Shipping manager.
    *
    * @return \Bpost\BpostApiClient\Bpost
+   *   The BPost client.
    */
   public function getBpostClient() {
     $config = $this->configuration['api'];
 
-    return new \Bpost\BpostApiClient\Bpost($config['username'], $config['password']);
+    return new BpostClient($config['username'], $config['password']);
   }
 
 }

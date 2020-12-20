@@ -15,7 +15,7 @@ use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
 use Drupal\commerce\AjaxFormTrait;
 use Drupal\commerce_bpost\BpostServicePluginBase;
 use Drupal\commerce_bpost\Exception\BpostCheckoutException;
-use Drupal\commerce_bpost_pickup\PickupPointManager;
+use Drupal\commerce_bpost_pickup\PickupPointManagerInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\commerce_shipping\OrderShipmentSummaryInterface;
@@ -46,22 +46,47 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
   use AjaxFormTrait;
 
   /**
-   * @var \Drupal\commerce_bpost_pickup\PickupPointManager
-   */
-  protected $pointManager;
-
-  /**
+   * The leaflet service.
+   *
    * @var \Drupal\leaflet\LeafletService
    */
   protected $leafletService;
 
   /**
+   * The pickup point manager.
    *
+   * @var \Drupal\commerce_bpost_pickup\PickupPointManager
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, ShipmentManagerInterface $shipmentManager, OrderShipmentSummaryInterface $shipmentSummary, PackerManagerInterface $packerManager, LeafletService $leafletService, PickupPointManager $pointManager, CountryRepositoryInterface $countryRepository) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entityTypeManager, $shipmentManager, $shipmentSummary, $packerManager, $countryRepository);
-    $this->leafletService = $leafletService;
-    $this->pointManager = $pointManager;
+  protected $pointManager;
+
+  /**
+   * PickupPoint constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\commerce_shipping\ShipmentManagerInterface $shipment_manager
+   *   The shipment manager.
+   * @param \Drupal\commerce_shipping\OrderShipmentSummaryInterface $shipment_summary
+   *   The shipment summary service.
+   * @param \Drupal\commerce_shipping\PackerManagerInterface $packer_manager
+   *   The packer manager.
+   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $country_repository
+   *   The country repository.
+   * @param \Drupal\leaflet\LeafletService $leflet_service
+   *   The leaflet service.
+   * @param \Drupal\commerce_bpost_pickup\PickupPointManagerInterface $point_manager
+   *   The pickup point manager.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ShipmentManagerInterface $shipment_manager, OrderShipmentSummaryInterface $shipment_summary, PackerManagerInterface $packer_manager, CountryRepositoryInterface $country_repository, LeafletService $leflet_service, PickupPointManagerInterface $point_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $shipment_manager, $shipment_summary, $packer_manager, $country_repository);
+    $this->leafletService = $leflet_service;
+    $this->pointManager = $point_manager;
   }
 
   /**
@@ -76,9 +101,9 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
       $container->get('commerce_shipping.shipment_manager'),
       $container->get('commerce_shipping.order_shipment_summary'),
       $container->get('commerce_shipping.packer_manager'),
+      $container->get('address.country_repository'),
       $container->get('leaflet.service'),
-      $container->get('commerce_bpost_pickup.points_manager'),
-      $container->get('address.country_repository')
+      $container->get('commerce_bpost_pickup.points_manager')
     );
   }
 
@@ -270,7 +295,12 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
       '#type' => 'submit',
       '#value' => $this->t('Search'),
       '#executes_submit_callback' => FALSE,
-      '#limit_validation_errors' => [array_merge($pane_form['#parents'], ['search_wrapper', 'postal_code'])],
+      '#limit_validation_errors' => [
+        array_merge($pane_form['#parents'], [
+          'search_wrapper',
+          'postal_code',
+        ]),
+      ],
       '#ajax' => [
         'callback' => [get_class($this), 'ajaxRefreshForm'],
         'element' => $pane_form['#parents'],
@@ -339,7 +369,14 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
 
         $list[] = [
           '#type' => 'link',
-          '#url' => Url::fromRoute('<current>', [], ['attributes' => ['class' => $classes, 'data-poi-id' => $poi->getId(), 'data-poi-lat' => $poi->getLatitude(), 'data-poi-lon' => $poi->getLongitude()]]),
+          '#url' => Url::fromRoute('<current>', [], [
+            'attributes' => [
+              'class' => $classes,
+              'data-poi-id' => $poi->getId(),
+              'data-poi-lat' => $poi->getLatitude(),
+              'data-poi-lon' => $poi->getLongitude(),
+            ],
+          ]),
           '#title' => $poi->getOffice(),
         ];
 
@@ -385,7 +422,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
 
       if ($selected_point_details instanceof Poi) {
         $pane_form['grid']['map_wrapper']['selection'][] = [
-          '#markup' => '<p>' . $this->t('Your selection: ') . '</p>',
+          '#markup' => '<p>' . $this->t('Your selection:') . '</p>',
         ];
         $pane_form['grid']['map_wrapper']['selection'][] = [
           '#markup' => '<p><strong>' . $selected_point_details->getOffice() . '</strong></p>',
@@ -428,7 +465,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function validateCheckoutPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
-    $selected = $this->getSelectedPoint($form_state);
+    $selected = $this->getSubmittedPoint($form_state);
     if (!$selected) {
       $form_state->setErrorByName('bpost_services', $this->t('There was no valid pickup point selection made.'));
     }
@@ -441,7 +478,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     $context = $form_state->get('bpost_service_checkout_pane_context');
     /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
     $order = $context['order'];
-    $selected = $this->getSelectedPoint($form_state);
+    $selected = $this->getSubmittedPoint($form_state);
     $details = $form_state->get('point_details');
     $this->clearShippingProfile($order);
     $shipping_profile = $this->getShippingProfile($order, $details[$selected]);
@@ -537,13 +574,15 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
   }
 
   /**
-   * Returns the submitted pickup point.
+   * Returns the submitted pickup point from the form state.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    *
-   * @return int|string|null
+   * @return int|null
+   *   The submitted point.
    */
-  protected function getSelectedPoint(FormStateInterface $form_state) {
+  protected function getSubmittedPoint(FormStateInterface $form_state) {
     $values = $form_state->getValue(['bpost_shipping', 'list_wrapper', 'radios']);
     if (!$values) {
       return NULL;
@@ -559,7 +598,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     }
 
     // Only return a valid selection if only one point was selected.
-    return $count === 1 ? $selected : NULL;
+    return $count === 1 ? (int) $selected : NULL;
   }
 
   /**
@@ -599,6 +638,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
    *   The form state.
    *
    * @return \Bpost\BpostApiClient\Geo6\Poi|null
+   *   The point details object.
    */
   protected function getSelectedPointDetails(OrderInterface $order, FormStateInterface $form_state) {
     $shipping_profile = $this->getShippingProfileFromOrder($order);
@@ -607,7 +647,11 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     }
 
     $complete_form = $form_state->getCompleteForm();
-    $radios = NestedArray::getValue($complete_form, ['bpost_shipping', 'list_wrapper', 'radios']);
+    $radios = NestedArray::getValue($complete_form, [
+      'bpost_shipping',
+      'list_wrapper',
+      'radios',
+    ]);
     if (!$radios) {
       return $shipping_profile ? $this->getPointDetails($shipping_profile) : NULL;
     }
@@ -619,7 +663,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
           return NULL;
         }
 
-        return $this->pointManager->getPointDetails($point_id, $details[$point_id]['type']);
+        return $this->pointManager->getPointDetails((int) $point_id, (int) $details[$point_id]['type']);
       }
     }
 
@@ -635,9 +679,14 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
    *   The form state.
    *
    * @return string|null
+   *   The selected post code.
    */
   protected function getSelectedPostalCode(OrderInterface $order, FormStateInterface $form_state) {
-    $postal_code = $form_state->getValue(['bpost_shipping', 'search_wrapper', 'postal_code']);
+    $postal_code = $form_state->getValue([
+      'bpost_shipping',
+      'search_wrapper',
+      'postal_code',
+    ]);
     if ($postal_code) {
       // Priority is the user selection.
       return $postal_code;
@@ -651,12 +700,14 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
    * Loads the details of a point from a given shipping profile.
    *
    * @param \Drupal\profile\Entity\ProfileInterface $shipping_profile
+   *   The shipping profile.
    *
-   * @return \Bpost\BpostApiClient\Geo6\Poi
+   * @return \Bpost\BpostApiClient\Geo6\Poi|null
+   *   The point details object.
    */
   protected function getPointDetails(ProfileInterface $shipping_profile) {
-    $point_id = $shipping_profile->get('point_id')->value;
-    $point_type = $shipping_profile->get('point_type')->value;
+    $point_id = (int) $shipping_profile->get('point_id')->value;
+    $point_type = (int) $shipping_profile->get('point_type')->value;
     return $this->pointManager->getPointDetails($point_id, $point_type);
   }
 

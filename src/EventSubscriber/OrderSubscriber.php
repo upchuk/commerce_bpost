@@ -70,6 +70,7 @@ class OrderSubscriber implements EventSubscriberInterface {
    * Creates a BPost order for a given shipment.
    *
    * @param \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment
+   *   The shipment.
    */
   public function createBpostOrderForShipment(ShipmentInterface $shipment) {
     $shipping_method = $shipment->getShippingMethod();

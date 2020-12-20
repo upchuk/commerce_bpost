@@ -44,9 +44,9 @@ trait EntityManagerTrait {
    *
    * @param float $price
    *   The price.
-   * @param null $dimensions
+   * @param array $dimensions
    *   The dimensions.
-   * @param null $weight
+   * @param array $weight
    *   The weight.
    * @param string $bundle
    *   The bundle.
@@ -56,7 +56,7 @@ trait EntityManagerTrait {
    * @return \Drupal\commerce_product\Entity\ProductInterface
    *   The product.
    */
-  protected function createProduct(float $price, $dimensions = NULL, $weight = NULL, string $bundle = 'default', string $title = NULL) {
+  protected function createProduct(float $price, array $dimensions = [], array $weight = [], string $bundle = 'default', string $title = NULL) {
     $variation = ProductVariation::create([
       'type' => $bundle,
       'sku' => strtolower($this->randomMachineName()),
@@ -66,13 +66,13 @@ trait EntityManagerTrait {
         'number' => $price,
         'currency_code' => 'EUR',
       ],
-      'dimensions' => $dimensions ?? [
+      'dimensions' => $dimensions ? $dimensions : [
         'length' => 10,
-          'width' => 10,
-          'height' => 10,
-          'unit' => 'mm',
-        ],
-      'weight' => $weight ?? ['number' => 10, 'unit' => 'g'],
+        'width' => 10,
+        'height' => 10,
+        'unit' => 'mm',
+      ],
+      'weight' => $weight ? $weight : ['number' => 10, 'unit' => 'g'],
     ]);
     $variation->save();
 

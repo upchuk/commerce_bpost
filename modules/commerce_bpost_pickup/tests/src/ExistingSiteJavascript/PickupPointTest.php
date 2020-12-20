@@ -177,15 +177,18 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
   /**
    * Tests that the shipment price is calculated based on weight and location.
    *
-   * @dataProvider providerShippingPrices
-   *
-   * @param $weight
+   * @param int $weight
    *   The product weight.
-   * @param $price
+   * @param int $price
    *   The expected price.
+   *
+   * @dataProvider providerShippingPrices
    */
-  public function testPickupPointShippingPrice($weight, $price) {
-    $product = $this->createProduct(10, NULL, ['number' => $weight, 'unit' => 'g']);
+  public function testPickupPointShippingPrice(int $weight, int $price) {
+    $product = $this->createProduct(10, [], [
+      'number' => $weight,
+      'unit' => 'g',
+    ]);
     $this->markEntityForCleanup($product);
 
     $user = $this->createUser();
@@ -231,20 +234,20 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
    */
   public function providerShippingPrices() {
     return [
-      ['1000', 14],
-      ['3000', 19],
+      [1000, 14],
+      [3000, 19],
     ];
   }
 
   /**
    * Asserts the current Bpost pickup point selection.
    *
-   * @param $name
+   * @param string $name
    *   The name of the point.
-   * @param $address
+   * @param string $address
    *   The displayed address.
    */
-  protected function assertCurrentSelection($name, $address) {
+  protected function assertCurrentSelection(string $name, string $address) {
     $this->assertSession()->elementContains('css', '.selected-pickup-point', 'Your selection');
     $this->assertSession()->elementContains('css', '.selected-pickup-point', $name);
     $this->assertSession()->elementContains('css', '.selected-pickup-point', $address);
@@ -253,13 +256,13 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
   /**
    * Clicks a pin on the map by the point ID.
    *
-   * @param $id
+   * @param int $id
    *   The point ID.
    *
    * @return string
    *   The result.
    */
-  protected function clickMapPin($id) {
+  protected function clickMapPin(int $id) {
     $js = sprintf(
       'jQuery(\'i[data-poi-id="%s"]\').parent().click()',
       $id
