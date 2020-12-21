@@ -68,6 +68,7 @@ class BpostShipping extends ShippingInformation implements ContainerFactoryPlugi
     // First, check if there are any shipping methods configured to use the
     // BPost shipping services.
     $shipping_method = $this->getShippingMethod();
+
     if (!$shipping_method) {
       $pane_form['message'] = [
         '#markup' => $this->t('There are no BPost shipping methods configured.'),

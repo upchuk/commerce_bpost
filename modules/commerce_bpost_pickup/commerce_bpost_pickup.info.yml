@@ -1,6 +1,6 @@
-name: Commerce BPost Pickup
+name: 'Commerce BPost Pickup Point'
 type: module
-description: 'Provides the Bpost pickup functionality'
+description: 'Provides the Bpost pickup point functionality'
 package: Commerce
 core_version_requirement: ^9
 dependencies:

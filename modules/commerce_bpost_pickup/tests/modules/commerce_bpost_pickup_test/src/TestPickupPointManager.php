@@ -28,7 +28,7 @@ class TestPickupPointManager implements PickupPointManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPointDetails($point_id, $point_type) {
+  public function getPointDetails(int $point_id, int $point_type) {
     $filename = $point_id . '-' . $point_type;
     $path = drupal_get_path('module', 'commerce_bpost_pickup_test') . '/fixtures/point-details/' . $filename . '.txt';
 

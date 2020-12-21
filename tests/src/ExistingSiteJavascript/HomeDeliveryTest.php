@@ -17,6 +17,13 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
   protected $refreshDatabase = TRUE;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $modules = [
+    'commerce_bpost_client_test',
+  ];
+
+  /**
    * Tests a default flow for the home delivery plugin.
    */
   public function testDefaultHomeDeliveryFlow() {

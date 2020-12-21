@@ -1,6 +1,6 @@
-name: 'Commerce BPost Test'
+name: 'Commerce BPost Client Test'
 type: module
-description: 'Test module for Commerce Bpost'
+description: 'Test module to mock the BPost client'
 package: Testing
 core_version_requirement: ^9
 dependencies:

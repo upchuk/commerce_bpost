@@ -79,7 +79,7 @@ class PickupPointManager implements PickupPointManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPointDetails($point_id, $point_type) {
+  public function getPointDetails(int $point_id, int $point_type) {
     $cid = 'point:' . $point_id . '_' . $point_type;
     if ($cache = $this->cache->get($cid)) {
       return $cache->data;

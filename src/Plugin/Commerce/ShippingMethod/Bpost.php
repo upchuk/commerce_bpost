@@ -2,7 +2,7 @@
 
 namespace Drupal\commerce_bpost\Plugin\Commerce\ShippingMethod;
 
-use Bpost\BpostApiClient\Bpost as BpostClient;
+use Drupal\commerce_bpost\BpostClientFactoryInterface;
 use Drupal\commerce_bpost\BpostServicePluginManager;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\commerce_shipping\PackageTypeManagerInterface;
@@ -36,6 +36,13 @@ class Bpost extends ShippingMethodBase {
    * @var \Drupal\commerce_store\Resolver\StoreResolverInterface
    */
   protected $storeResolver;
+
+  /**
+   * The client factory.
+   *
+   * @var \Drupal\commerce_bpost\BpostClientFactoryInterface
+   */
+  private $clientFactory;
 
   /**
    * The available international weight segments specific to BPost.
@@ -91,8 +98,10 @@ class Bpost extends ShippingMethodBase {
    *   The BPost service plugin manager.
    * @param \Drupal\commerce_store\Resolver\StoreResolverInterface $store_resolver
    *   The store resolver.
+   * @param \Drupal\commerce_bpost\BpostClientFactoryInterface $client_factory
+   *   The client factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, PackageTypeManagerInterface $package_type_manager, WorkflowManagerInterface $workflow_manager, BpostServicePluginManager $bpost_service_manager, StoreResolverInterface $store_resolver) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PackageTypeManagerInterface $package_type_manager, WorkflowManagerInterface $workflow_manager, BpostServicePluginManager $bpost_service_manager, StoreResolverInterface $store_resolver, BpostClientFactoryInterface $client_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $package_type_manager, $workflow_manager);
     foreach ($bpost_service_manager->getDefinitions() as $id => $definition) {
       $this->services[$id] = new ShippingService($id, $definition['label']);
@@ -100,6 +109,7 @@ class Bpost extends ShippingMethodBase {
 
     $this->bpostServiceManager = $bpost_service_manager;
     $this->storeResolver = $store_resolver;
+    $this->clientFactory = $client_factory;
   }
 
   /**
@@ -113,7 +123,8 @@ class Bpost extends ShippingMethodBase {
       $container->get('plugin.manager.commerce_package_type'),
       $container->get('plugin.manager.workflow'),
       $container->get('plugin.manager.bpost_service'),
-      $container->get('commerce_store.default_store_resolver')
+      $container->get('commerce_store.default_store_resolver'),
+      $container->get('commerce_bpost.client_factory')
     );
   }
 
@@ -299,8 +310,7 @@ class Bpost extends ShippingMethodBase {
    */
   public function getBpostClient() {
     $config = $this->configuration['api'];
-
-    return new BpostClient($config['username'], $config['password']);
+    return $this->clientFactory->getClient($config);
   }
 
 }
