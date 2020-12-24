@@ -3,10 +3,9 @@
     "type": "drupal-module",
     "description": "Drupal Commerce BPost integrates with the BPost shipping service.",
     "require": {
-        "php": ">=7.1",
-        "antidot-be/bpost-api-library": "dev-master",
-        "drupal/commerce_shipping": "^2.0",
-        "drupal/core": "^9.0"
+        "php": ">=7.3",
+        "antidot-be/bpost-api-library": "^3.4",
+        "drupal/commerce_shipping": "^2.0"
     },
     "require-dev": {
         "composer/installers": "^1.2",
@@ -14,13 +13,13 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
         "drupal-composer/drupal-scaffold": "^2.2",
         "drupal/admin_toolbar": "2.x-dev",
-        "drupal/core-dev": "^9.0",
+        "drupal/core-dev": " ^8.8 || ^9",
         "drupal/devel_entity_updates": "3.x-dev",
         "drupal/leaflet": "^2.1",
         "drush/drush": "^10",
         "openeuropa/task-runner": "~1.0-beta2",
-        "phpspec/prophecy-phpunit": "^2.0",
-        "weitzman/drupal-test-traits": "dev-master"
+        "weitzman/drupal-test-traits": "dev-master",
+        "phpspec/prophecy-phpunit": "^2.0"
     },
     "repositories": [
         {
