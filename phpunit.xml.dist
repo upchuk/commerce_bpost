@@ -27,13 +27,5 @@
       <directory>./tests/</directory>
       <directory>./modules/*/tests/</directory>
     </testsuite>
-    <testsuite name="existing-site">
-      <directory>./modules/**/tests/src/ExistingSite</directory>
-      <directory>./tests/src/ExistingSite</directory>
-    </testsuite>
-    <testsuite name="existing-site-javascript">
-      <directory>./modules/**/tests/src/ExistingSiteJavascript</directory>
-      <directory>./tests/src/ExistingSiteJavascript</directory>
-    </testsuite>
   </testsuites>
 </phpunit>

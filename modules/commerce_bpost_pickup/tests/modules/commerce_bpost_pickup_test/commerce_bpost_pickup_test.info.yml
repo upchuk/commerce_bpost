@@ -1,7 +1,9 @@
-name: Commerce BPost Pickup Test
+name: 'Commerce BPost Pickup Test'
 type: module
 description: 'Test module for Commerce Bpost Pickup'
 package: Testing
 core_version_requirement: ^8.8 || ^9
+
 dependencies:
   - commerce_bpost:commerce_bpost_pickup
+  - commerce_bpost:commerce_bpost_test

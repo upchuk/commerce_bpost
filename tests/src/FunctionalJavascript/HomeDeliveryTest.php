@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\commerce_bpost\ExistingSiteJavascript;
+namespace Drupal\Tests\commerce_bpost\FunctionalJavascript;
 
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\physical\Calculator;
@@ -9,26 +9,13 @@ use Drupal\profile\Entity\Profile;
 /**
  * Tests the home delivery capability.
  */
-class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $refreshDatabase = TRUE;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $modules = [
-    'commerce_bpost_client_test',
-  ];
+class HomeDeliveryTest extends BpostWebDriverTestBase {
 
   /**
    * Tests a default flow for the home delivery plugin.
    */
   public function testDefaultHomeDeliveryFlow() {
     $product = $this->createProduct(10);
-    $this->markEntityForCleanup($product);
 
     $user = $this->createUser();
     $this->drupalLogin($user);
@@ -61,7 +48,7 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
     $this->assertSession()->pageTextContains('Danny S');
     $this->assertSession()->pageTextContains('One street');
     $this->assertSession()->pageTextContains('1000 Brussels');
-    $this->assertSession()->elementContains('css', '.field--name-shipping-method .field__item', 'Home delivery');
+    $this->assertSession()->elementContains('css', '#edit-review-bpost-shipping', 'Home delivery');
 
     $orders = \Drupal::entityTypeManager()->getStorage('commerce_order')->loadByProperties(['mail' => $user->getEmail()]);
     /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
@@ -144,7 +131,6 @@ class HomeDeliveryTest extends BpostExistingSiteJavascriptBase {
       'number' => $weight,
       'unit' => 'g',
     ]);
-    $this->markEntityForCleanup($product);
 
     $user = $this->createUser();
     $this->drupalLogin($user);

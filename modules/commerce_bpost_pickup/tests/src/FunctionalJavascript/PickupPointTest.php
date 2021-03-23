@@ -1,26 +1,21 @@
 <?php
 
-namespace Drupal\Tests\commerce_bpost_pickup\ExistingSiteJavascript;
+namespace Drupal\Tests\commerce_bpost_pickup\FunctionalJavascript;
 
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\physical\Calculator;
 use Drupal\profile\Entity\Profile;
-use Drupal\Tests\commerce_bpost\ExistingSiteJavascript\BpostExistingSiteJavascriptBase;
+use Drupal\Tests\commerce_bpost\FunctionalJavascript\BpostWebDriverTestBase;
 
 /**
  * Tests the pickup capability.
  */
-class PickupPointTest extends BpostExistingSiteJavascriptBase {
+class PickupPointTest extends BpostWebDriverTestBase {
 
   /**
    * {@inheritdoc}
    */
-  protected $refreshDatabase = TRUE;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $modules = [
+  public static $modules = [
     'commerce_bpost_pickup',
     'commerce_bpost_pickup_test',
   ];
@@ -30,7 +25,6 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
    */
   public function testDefaultPickupPoint() {
     $product = $this->createProduct(10);
-    $this->markEntityForCleanup($product);
 
     $user = $this->createUser();
     $this->drupalLogin($user);
@@ -155,7 +149,7 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
     $this->getSession()->getPage()->fillField('City', 'Brussels');
     $this->getSession()->getPage()->pressButton('Continue to review');
 
-    $this->assertSession()->elementContains('css', '.field--name-shipping-method', 'Home delivery');
+    $this->assertSession()->elementContains('css', '#edit-review-bpost-shipping', 'Home delivery');
     \Drupal::entityTypeManager()->getStorage('commerce_order')->resetCache();
     \Drupal::entityTypeManager()->getStorage('profile')->resetCache();
     \Drupal::entityTypeManager()->getStorage('commerce_shipment')->resetCache();
@@ -189,7 +183,6 @@ class PickupPointTest extends BpostExistingSiteJavascriptBase {
       'number' => $weight,
       'unit' => 'g',
     ]);
-    $this->markEntityForCleanup($product);
 
     $user = $this->createUser();
     $this->drupalLogin($user);

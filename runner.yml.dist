@@ -33,14 +33,6 @@ commands:
     # Temporarily remove a non-supported contrib submodule.
     - { task: "remove", file: "build/modules/contrib/admin_toolbar/admin_toolbar_search" }
 
-  drupal:testing-setup:
-    - task: "append"
-      file: "build/sites/default/settings.php"
-      text: |
-        if (file_exists($app_root . '/' . $site_path . '/settings.testing.php')) {
-          include $app_root . '/' . $site_path . '/settings.testing.php';
-        }
-
   setup:phpunit:
     - { task: "process", source: "phpunit.xml.dist", destination: "phpunit.xml" }
   drupal:phpcs:
