@@ -15,7 +15,7 @@
         "drupal/admin_toolbar": "2.x-dev",
         "drupal/core-dev": " ^8.8 || ^9",
         "drupal/devel_entity_updates": "3.x-dev",
-        "drupal/leaflet": "^2.1",
+        "drupal/leaflet": "2.1.7",
         "drush/drush": "^10",
         "openeuropa/task-runner": "~1.0-beta2",
         "weitzman/drupal-test-traits": "dev-master",
