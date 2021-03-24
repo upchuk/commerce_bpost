@@ -5,7 +5,7 @@
     "require": {
         "php": ">=7.3",
         "antidot-be/bpost-api-library": "^3.4",
-        "drupal/commerce_shipping": "^2.0"
+        "drupal/commerce_shipping": "~2"
     },
     "require-dev": {
         "composer/installers": "^1.2",
