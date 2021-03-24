@@ -181,20 +181,20 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
       $segment = $start . '_' . $end;
 
       $form['national'][$segment] = $element + [
-          '#title' => $this->t('@start grams to @end grams', [
-            '@start' => $start,
-            '@end' => $end,
-          ]),
-          '#default_value' => $amounts['national'][$segment] ?? NULL,
-        ];
+        '#title' => $this->t('@start grams to @end grams', [
+          '@start' => $start,
+          '@end' => $end,
+        ]),
+        '#default_value' => $amounts['national'][$segment] ?? NULL,
+      ];
     }
 
     $form['national']['default'] = $element + [
-        '#title' => $this->t('Default rate'),
-        '#description' => $this->t('This rate is used in case a matching segment does not have a rate value'),
-        '#default_value' => $amounts['national']['default'] ?? NULL,
-        '#required' => TRUE,
-      ];
+      '#title' => $this->t('Default rate'),
+      '#description' => $this->t('This rate is used in case a matching segment does not have a rate value'),
+      '#default_value' => $amounts['national']['default'] ?? NULL,
+      '#required' => TRUE,
+    ];
 
     $form['supports_international'] = [
       '#type' => 'checkbox',
@@ -230,20 +230,20 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
         $segment = $start . '_' . $end;
 
         $form['international'][$country_code][$segment] = $element + [
-            '#title' => $this->t('@start grams to @end grams', [
-              '@start' => $start,
-              '@end' => $end,
-            ]),
-            '#default_value' => $amounts['international'][$country_code][$segment] ?? NULL,
-          ];
+          '#title' => $this->t('@start grams to @end grams', [
+            '@start' => $start,
+            '@end' => $end,
+          ]),
+          '#default_value' => $amounts['international'][$country_code][$segment] ?? NULL,
+        ];
       }
 
       $form['international'][$country_code]['default'] = $element + [
-          '#title' => $this->t('Default rate'),
-          '#description' => $this->t('This rate is used in case a matching segment does not have a rate value'),
-          '#default_value' => $amounts['international'][$country_code]['default'] ?? NULL,
-          '#required' => TRUE,
-        ];
+        '#title' => $this->t('Default rate'),
+        '#description' => $this->t('This rate is used in case a matching segment does not have a rate value'),
+        '#default_value' => $amounts['international'][$country_code]['default'] ?? NULL,
+        '#required' => TRUE,
+      ];
 
     }
 
@@ -373,6 +373,11 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    *   The price.
    */
   protected function determinePriceFromWeightSegment(Weight $weight, array $rate_amounts) {
+    // The Bpost configuration stores the weight segments in grams so if the
+    // incoming weight is not in grams, we need to convert it.
+    if ($weight->getUnit() !== 'g') {
+      $weight = $weight->convert('g');
+    }
     // @todo convert incoming weight to gram.
     foreach ($rate_amounts as $segment => $price) {
       if ($segment === 'default') {
@@ -383,7 +388,7 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
       $start_weight = new Weight($start, WeightUnit::GRAM);
       $end_weight = new Weight($end, WeightUnit::GRAM);
 
-      if ($weight->greaterThanOrEqual($start_weight) && $weight->lessThan($end_weight)) {
+      if ($weight->greaterThanOrEqual($start_weight) && $weight->lessThanOrEqual($end_weight)) {
         return Price::fromArray($price);
       }
     }

@@ -123,13 +123,15 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
    *   The shipping country.
    * @param int $price
    *   The expected price.
+   * @param string $unit
+   *   The weight unit.
    *
    * @dataProvider providerShippingPrices
    */
-  public function testHomeDeliveryShippingPrice($weight, $country, $price) {
+  public function testHomeDeliveryShippingPrice($weight, $country, $price, $unit = 'g') {
     $product = $this->createProduct(10, [], [
       'number' => $weight,
-      'unit' => 'g',
+      'unit' => $unit,
     ]);
 
     $user = $this->createUser();
@@ -176,6 +178,8 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     return [
       [1000, 'Belgium', 10],
       [3000, 'Belgium', 20],
+      // Different weight unit.
+      [3, 'Belgium', 20, 'kg'],
       // Default rate.
       [50000, 'Belgium', 25],
       [100, 'France', 15],
