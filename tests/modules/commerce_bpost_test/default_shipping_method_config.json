@@ -14,6 +14,10 @@
           "5001_10000": {
             "number": "30.00",
             "currency_code": "EUR"
+          },
+          "default": {
+            "number": "25.00",
+            "currency_code": "EUR"
           }
         },
         "international": {
@@ -25,6 +29,10 @@
             "251_500": {
               "number": "25",
               "currency_code": "EUR"
+            },
+            "default": {
+              "number": "12",
+              "currency_code": "EUR"
             }
           },
           "IT": {
@@ -34,6 +42,10 @@
             },
             "251_500": {
               "number": "45",
+              "currency_code": "EUR"
+            },
+            "default": {
+              "number": "40",
               "currency_code": "EUR"
             }
           }

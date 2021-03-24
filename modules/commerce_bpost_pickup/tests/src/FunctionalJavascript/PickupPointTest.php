@@ -229,6 +229,8 @@ class PickupPointTest extends BpostWebDriverTestBase {
     return [
       [1000, 14],
       [3000, 19],
+      // Default rate.
+      [6000, 21],
     ];
   }
 

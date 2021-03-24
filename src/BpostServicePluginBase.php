@@ -171,20 +171,30 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
 
     $shipping_countries = $form_state->get('shipping_countries');
 
+    $element = [
+      '#type' => 'commerce_price',
+      '#available_currencies' => ['EUR'],
+      '#suffix' => '<br />',
+    ];
+
     foreach (Bpost::NATIONAL_WEIGHT_SEGMENTS as $start => $end) {
       $segment = $start . '_' . $end;
 
-      $form['national'][$segment] = [
-        '#type' => 'commerce_price',
-        '#title' => $this->t('@start grams to @end grams', [
-          '@start' => $start,
-          '@end' => $end,
-        ]),
-        '#available_currencies' => ['EUR'],
-        '#default_value' => $amounts['national'][$segment] ?? NULL,
-        '#suffix' => '<br />',
-      ];
+      $form['national'][$segment] = $element + [
+          '#title' => $this->t('@start grams to @end grams', [
+            '@start' => $start,
+            '@end' => $end,
+          ]),
+          '#default_value' => $amounts['national'][$segment] ?? NULL,
+        ];
     }
+
+    $form['national']['default'] = $element + [
+        '#title' => $this->t('Default rate'),
+        '#description' => $this->t('This rate is used in case a matching segment does not have a rate value'),
+        '#default_value' => $amounts['national']['default'] ?? NULL,
+        '#required' => TRUE,
+      ];
 
     $form['supports_international'] = [
       '#type' => 'checkbox',
@@ -219,17 +229,22 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
       foreach (Bpost::INTERNATIONAL_WEIGHT_SEGMENTS as $start => $end) {
         $segment = $start . '_' . $end;
 
-        $form['international'][$country_code][$segment] = [
-          '#type' => 'commerce_price',
-          '#title' => $this->t('@start grams to @end grams', [
-            '@start' => $start,
-            '@end' => $end,
-          ]),
-          '#available_currencies' => ['EUR'],
-          '#default_value' => $amounts['international'][$country_code][$segment] ?? NULL,
-          '#suffix' => '<br />',
-        ];
+        $form['international'][$country_code][$segment] = $element + [
+            '#title' => $this->t('@start grams to @end grams', [
+              '@start' => $start,
+              '@end' => $end,
+            ]),
+            '#default_value' => $amounts['international'][$country_code][$segment] ?? NULL,
+          ];
       }
+
+      $form['international'][$country_code]['default'] = $element + [
+          '#title' => $this->t('Default rate'),
+          '#description' => $this->t('This rate is used in case a matching segment does not have a rate value'),
+          '#default_value' => $amounts['international'][$country_code]['default'] ?? NULL,
+          '#required' => TRUE,
+        ];
+
     }
 
     return $form;
@@ -246,29 +261,31 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    if (!$form_state->getErrors()) {
-      $values = $form_state->getValue($form['#parents']);
-      $this->configuration['rate_amounts'] = [];
+    if ($form_state->getErrors()) {
+      return;
+    }
 
-      $national_service_rates = array_filter($values['national'], function ($rate) {
+    $values = $form_state->getValue($form['#parents']);
+    $this->configuration['rate_amounts'] = [];
+
+    $national_service_rates = array_filter($values['national'], function ($rate) {
+      return $rate['number'] != "";
+    });
+
+    $this->configuration['rate_amounts']['national'] = $national_service_rates;
+
+    $international_service_rates = [];
+    foreach ($values['international'] as $country_code => $rates) {
+      $rates = array_filter($rates, function ($rate) {
         return $rate['number'] != "";
       });
 
-      $this->configuration['rate_amounts']['national'] = $national_service_rates;
-
-      $international_service_rates = [];
-      foreach ($values['international'] as $country_code => $rates) {
-        $rates = array_filter($rates, function ($rate) {
-          return $rate['number'] != "";
-        });
-
-        $international_service_rates[$country_code] = $rates;
-      }
-
-      $this->configuration['rate_amounts']['international'] = $international_service_rates;
-
-      $this->configuration['supports_international'] = $values['supports_international'];
+      $international_service_rates[$country_code] = $rates;
     }
+
+    $this->configuration['rate_amounts']['international'] = $international_service_rates;
+
+    $this->configuration['supports_international'] = $values['supports_international'];
   }
 
   /**
@@ -358,6 +375,10 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
   protected function determinePriceFromWeightSegment(Weight $weight, array $rate_amounts) {
     // @todo convert incoming weight to gram.
     foreach ($rate_amounts as $segment => $price) {
+      if ($segment === 'default') {
+        continue;
+      }
+
       [$start, $end] = explode('_', $segment);
       $start_weight = new Weight($start, WeightUnit::GRAM);
       $end_weight = new Weight($end, WeightUnit::GRAM);
@@ -367,10 +388,9 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
       }
     }
 
-    // If we don't find any rates, we default to the first one.
-    // @todo throw event to resolve a default rate.
-    $first_amount = reset($rate_amounts);
-    return Price::fromArray($first_amount);
+    // If we don't find any rates, we use the default one which is mandatory.
+    $default_amount = $rate_amounts['default'];
+    return Price::fromArray($default_amount);
   }
 
   /**

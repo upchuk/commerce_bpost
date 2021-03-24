@@ -176,9 +176,15 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     return [
       [1000, 'Belgium', 10],
       [3000, 'Belgium', 20],
+      // Default rate.
+      [50000, 'Belgium', 25],
       [100, 'France', 15],
       [400, 'France', 25],
+      // Default rate.
+      [4000, 'France', 12],
      [400, 'Italy', 45],
+      // Default rate.
+     [4000, 'Italy', 40],
     ];
   }
 
