@@ -242,7 +242,11 @@ abstract class BpostServicePluginBase extends PluginBase implements BpostService
         '#title' => $this->t('Default rate'),
         '#description' => $this->t('This rate is used in case a matching segment does not have a rate value'),
         '#default_value' => $amounts['international'][$country_code]['default'] ?? NULL,
-        '#required' => TRUE,
+        '#states' => [
+          'required' => [
+            'input[name="' . $name . '"]' => ['checked' => TRUE],
+          ],
+        ],
       ];
 
     }
