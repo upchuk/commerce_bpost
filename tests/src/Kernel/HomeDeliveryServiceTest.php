@@ -73,7 +73,7 @@ class HomeDeliveryServiceTest extends BpostKernelTestBase {
     $destination = $box->getInternationalBox();
     $this->assertInstanceOf(International::class, $destination);
     $this->assertEquals('10', $destination->getParcelWeight());
-    $this->assertEquals(Product::PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO, $destination->getProduct());
+    $this->assertEquals(Product::PRODUCT_NAME_BPACK_WORLD_BUSINESS, $destination->getProduct());
     $customs_info = $destination->getCustomsInfo();
     $expected_value = (float) $this->order->getSubtotalPrice()->getNumber();
     $this->assertEquals((int) $expected_value * 100, $customs_info->getParcelValue());

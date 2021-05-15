@@ -94,7 +94,7 @@ class HomeDelivery extends BpostServicePluginBase {
 
     $values = $shipping_profile->get('address')->first()->getValue();
     // It's either national or international shipping.
-    return $values['country_code'] === 'BE' ? Product::PRODUCT_NAME_BPACK_24H_PRO : Product::PRODUCT_NAME_BPACK_WORLD_EXPRESS_PRO;
+    return $values['country_code'] === 'BE' ? Product::PRODUCT_NAME_BPACK_24H_PRO : Product::PRODUCT_NAME_BPACK_WORLD_BUSINESS;
   }
 
   /**
