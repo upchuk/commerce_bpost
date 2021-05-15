@@ -24,7 +24,6 @@ install:
   - docker-compose exec -u root php chown -R www-data:www-data build
 
 before_script:
-  - docker-compose exec -u www-data php ./vendor/bin/run drupal:site-install
   - docker-compose exec -u root php chmod -R 775 build/sites/default
 
 script:
