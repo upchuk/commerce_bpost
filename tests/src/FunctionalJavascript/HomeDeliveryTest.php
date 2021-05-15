@@ -112,6 +112,19 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     $this->assertEquals(10, Calculator::trim($shipment->getWeight()->getNumber()));
     // The price has updated because the shipment delivers to France now.
     $this->assertEquals(15, Calculator::trim($shipment->getAmount()->getNumber()));
+
+    // Place the order to trigger the subscribers.
+    $order->getState()->applyTransitionById('place');
+    $order->save();
+
+    /** @var \Bpost\BpostApiClient\Bpost\Order $bpost_order */
+    $bpost_order = \Drupal::state()->get('commerce_bpost_client_test.last_order');
+    // The box contents are tested in Kernel tests, so we just need to check
+    // that the event subscriber works.
+    $box = $bpost_order->getBoxes()[0];
+    $destination = $box->getNationalBox() ? $box->getNationalBox() : $box->getInternationalBox();
+    $address = $destination->getReceiver()->getAddress();
+    $this->assertEquals(50, $address->getNumber());
   }
 
   /**

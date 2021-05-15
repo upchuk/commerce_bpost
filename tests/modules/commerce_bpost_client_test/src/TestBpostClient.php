@@ -11,27 +11,10 @@ use Bpost\BpostApiClient\Bpost\Order;
 class TestBpostClient extends Bpost {
 
   /**
-   * Stores the last order sent to Bpost.
-   *
-   * @var \Bpost\BpostApiClient\Bpost\Order|null
-   */
-  protected $lastOrder = NULL;
-
-  /**
    * {@inheritdoc}
    */
   public function createOrReplaceOrder(Order $order) {
-    $this->lastOrder = $order;
-  }
-
-  /**
-   * Returns the last order sent to BPost.
-   *
-   * @return \Bpost\BpostApiClient\Bpost\Order|null
-   *   The order.
-   */
-  public function getLastOrder() {
-    return $this->lastOrder;
+    \Drupal::state()->set('commerce_bpost_client_test.last_order', $order);
   }
 
 }

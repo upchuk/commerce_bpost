@@ -1,0 +1,5 @@
+services:
+  commerce_bpost_test.box_preparation_subscriber:
+    class: Drupal\commerce_bpost_test\EventSubscriber\BoxPreparationTestSubscriber
+    tags:
+      - {name: event_subscriber}

@@ -4,11 +4,13 @@ namespace Drupal\commerce_bpost\EventSubscriber;
 
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Line;
+use Drupal\commerce_bpost\Event\BoxPreparationEvent;
 use Drupal\commerce_bpost\Exception\BpostCheckoutException;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
 use Drupal\commerce_shipping\ShippingOrderManagerInterface;
 use Drupal\state_machine\Event\WorkflowTransitionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Subscribes to the order creation and creates the BPost shipping order.
@@ -23,13 +25,23 @@ class OrderSubscriber implements EventSubscriberInterface {
   protected $shippingOrderManager;
 
   /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
+   */
+  protected $evenDispatcher;
+
+  /**
    * Constructs a new OrderSubscriber object.
    *
    * @param \Drupal\commerce_shipping\ShippingOrderManagerInterface $shipping_order_manager
    *   The shipping order manager.
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    */
-  public function __construct(ShippingOrderManagerInterface $shipping_order_manager) {
+  public function __construct(ShippingOrderManagerInterface $shipping_order_manager, EventDispatcherInterface $event_dispatcher) {
     $this->shippingOrderManager = $shipping_order_manager;
+    $this->evenDispatcher = $event_dispatcher;
   }
 
   /**
@@ -104,6 +116,9 @@ class OrderSubscriber implements EventSubscriberInterface {
       $exception->setOrder($shipment->getOrder());
       throw $exception;
     }
+
+    $event = new BoxPreparationEvent($shipment, $box);
+    $this->evenDispatcher->dispatch(BoxPreparationEvent::BOX_ALTER, $event);
 
     $order->addBox($box);
     $configuration = $shipping_method->getPlugin()->getConfiguration();

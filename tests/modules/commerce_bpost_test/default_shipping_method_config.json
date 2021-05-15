@@ -57,7 +57,7 @@
   "api": {
     "username": "",
     "password": "",
-    "remote_order_creation": 0
+    "remote_order_creation": 1
   },
   "default_package_type": "custom_box",
   "services": [

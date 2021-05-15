@@ -9,7 +9,7 @@ services:
 
   commerce_bpost.order_subscriber:
     class: Drupal\commerce_bpost\EventSubscriber\OrderSubscriber
-    arguments: ['@commerce_shipping.order_manager']
+    arguments: ['@commerce_shipping.order_manager', '@event_dispatcher']
     tags:
       - { name: event_subscriber }
 

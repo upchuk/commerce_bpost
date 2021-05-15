@@ -26,7 +26,7 @@ class BpostWebDriverTestBase extends CommerceWebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     // Delete the store the parent created.
     /** @var \Drupal\commerce_store\Entity\StoreInterface[] $stores */

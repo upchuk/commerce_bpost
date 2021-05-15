@@ -61,6 +61,7 @@ function commerce_bpost_test_install() {
   /** @var \Drupal\commerce_order\Entity\OrderTypeInterface $order_type */
   $order_type = OrderType::load('default');
   $order_type->setThirdPartySetting('commerce_shipping', 'shipment_type', 'default');
+  $order_type->setWorkflowId('order_fulfillment');
   $order_type->save();
   $field_definition = commerce_shipping_build_shipment_field_definition('default');
   $configurable_field_manager = \Drupal::service('commerce.configurable_field_manager');
