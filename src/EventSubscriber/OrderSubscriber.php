@@ -97,7 +97,7 @@ class OrderSubscriber implements EventSubscriberInterface {
     /** @var \Bpost\BpostApiClient\Bpost $client */
     $client = $shipping_method->getPlugin()->getBpostClient();
 
-    $orderReference = 'WEYRICH__DRUPAL__' . $shipment->getOrder()->getOrderNumber();
+    $orderReference = $shipment->getOrder()->getOrderNumber();
     $order = new Order($orderReference);
 
     foreach ($shipment->getItems() as $item) {
