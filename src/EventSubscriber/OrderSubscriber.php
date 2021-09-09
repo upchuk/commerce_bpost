@@ -110,15 +110,14 @@ class OrderSubscriber implements EventSubscriberInterface {
       // There can be data validation errors in the preparation of the box so
       // we need to catch these.
       $box = $service->prepareDeliveryBox($shipment);
+      $event = new BoxPreparationEvent($shipment, $box);
+      $this->evenDispatcher->dispatch(BoxPreparationEvent::BOX_ALTER, $event);
     }
     catch (\Exception $e) {
       $exception = new BpostCheckoutException($e->getMessage());
       $exception->setOrder($shipment->getOrder());
       throw $exception;
     }
-
-    $event = new BoxPreparationEvent($shipment, $box);
-    $this->evenDispatcher->dispatch(BoxPreparationEvent::BOX_ALTER, $event);
 
     $order->addBox($box);
     $configuration = $shipping_method->getPlugin()->getConfiguration();
