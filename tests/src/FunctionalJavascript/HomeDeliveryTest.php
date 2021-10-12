@@ -50,9 +50,7 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     $this->assertSession()->pageTextContains('1000 Brussels');
     $this->assertSession()->elementContains('css', '#edit-review-bpost-shipping', 'Home delivery');
 
-    $orders = \Drupal::entityTypeManager()->getStorage('commerce_order')->loadByProperties(['mail' => $user->getEmail()]);
-    /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
-    $order = reset($orders);
+    $order = $this->loadOrderByCustomerEmail($user->getEmail());
     $billing_profile = $order->getBillingProfile();
     /** @var \Drupal\commerce_shipping\Entity\ShipmentInterface $shipment */
     $shipment = $order->get('shipments')->entity;
@@ -114,6 +112,7 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     $this->assertEquals(15, Calculator::trim($shipment->getAmount()->getNumber()));
 
     // Place the order to trigger the subscribers.
+    $order = $this->loadOrderByCustomerEmail($user->getEmail());
     $order->getState()->applyTransitionById('place');
     $order->save();
 
@@ -207,6 +206,23 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
       // Default rate.
      [4000, 'Italy', 40],
     ];
+  }
+
+  /**
+   * Loads an order based on the customer email.
+   *
+   * @param string $email
+   *   The email.
+   *
+   * @return \Drupal\commerce_order\Entity\OrderInterface
+   *   The order.
+   */
+  protected function loadOrderByCustomerEmail($email) {
+    \Drupal::entityTypeManager()->getStorage('commerce_order')->resetCache();
+    $orders = \Drupal::entityTypeManager()->getStorage('commerce_order')->loadByProperties(['mail' => $email]);
+    /** @var \Drupal\commerce_order\Entity\OrderInterface $order */
+    $order = reset($orders);
+    return $order;
   }
 
 }
