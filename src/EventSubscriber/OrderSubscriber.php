@@ -102,7 +102,7 @@ class OrderSubscriber implements EventSubscriberInterface {
 
     foreach ($shipment->getItems() as $item) {
       $order->addLine(
-        new Line($item->getTitle(), (int) $item->getQuantity())
+        new Line($this->removeInvalidTitleCharacters($item->getTitle()), (int) $item->getQuantity())
       );
     }
 
@@ -132,6 +132,19 @@ class OrderSubscriber implements EventSubscriberInterface {
         throw $exception;
       }
     }
+  }
+
+  /**
+   * Removes the invalid characters from the item title.
+   *
+   * @param string $title
+   *   The title.
+   *
+   * @return string
+   *   The corrected title.
+   */
+  protected function removeInvalidTitleCharacters(string $title) {
+    return trim(str_replace(['&', '<', '>'], '', $title));
   }
 
 }

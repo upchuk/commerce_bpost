@@ -15,7 +15,7 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
    * Tests a default flow for the home delivery plugin.
    */
   public function testDefaultHomeDeliveryFlow() {
-    $product = $this->createProduct(10);
+    $product = $this->createProduct(10, [], [], 'default', 'Title that contains chars which are not allowed: & < >');
 
     $user = $this->createUser();
     $this->drupalLogin($user);
@@ -125,6 +125,10 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     $destination = $box->getNationalBox() ? $box->getNationalBox() : $box->getInternationalBox();
     $address = $destination->getReceiver()->getAddress();
     $this->assertEquals(50, $address->getNumber());
+
+    // Assert the product titles don't contain invalid characters (& or <>).
+    $line_item_title = $bpost_order->getLines()[0]->getText();
+    $this->assertEquals('Title that contains chars which are not allowed:', trim($line_item_title));
   }
 
   /**
