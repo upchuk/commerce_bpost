@@ -40,7 +40,7 @@ function commerce_bpost_pickup_local_tasks_alter(&$local_tasks) {
 /**
  * Implements hook_ENTITY_TYPE_access() for the Profile entity type.
  */
-function commerce_bpost_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function commerce_bpost_pickup_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
   if ($entity->bundle() === 'bpost_pickup_point' && \Drupal::service('current_route_match')->getRouteName() === 'profile.user_page.single') {
     // The bpost pickup profile should not be accessible on the user route.
     return AccessResult::forbidden();

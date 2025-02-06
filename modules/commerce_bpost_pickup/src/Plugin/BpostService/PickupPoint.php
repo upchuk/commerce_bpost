@@ -144,7 +144,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
       4 => Product::PRODUCT_NAME_BPACK_24_7,
     ];
 
-    return isset($map[$type]) ? $map[$type] : NULL;
+    return $map[$type] ?? NULL;
   }
 
   /**
@@ -486,7 +486,7 @@ class PickupPoint extends BpostServicePluginBase implements ContainerFactoryPlug
     $shipping_profile->save();
 
     $order_shipments = $order->get('shipments')->referencedEntities();
-    list($packed_shipments, $removed_shipments) = $this->packerManager->packToShipments($order, $shipping_profile, $order_shipments);
+    [$packed_shipments, $removed_shipments] = $this->packerManager->packToShipments($order, $shipping_profile, $order_shipments);
 
     $shipments = [];
     foreach ($packed_shipments as $shipment) {

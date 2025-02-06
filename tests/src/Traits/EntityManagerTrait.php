@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Drupal\Tests\commerce_bpost\Traits;
 
@@ -56,7 +56,7 @@ trait EntityManagerTrait {
    * @return \Drupal\commerce_product\Entity\ProductInterface
    *   The product.
    */
-  protected function createProduct(float $price, array $dimensions = [], array $weight = [], string $bundle = 'default', string $title = NULL) {
+  protected function createProduct(float $price, array $dimensions = [], array $weight = [], string $bundle = 'default', ?string $title = NULL) {
     $variation = ProductVariation::create([
       'type' => $bundle,
       'sku' => strtolower($this->randomMachineName()),
