@@ -43,7 +43,7 @@ $ docker-compose up -d
 $ docker-compose exec php composer install
 $ docker-compose exec php ./vendor/bin/run drupal:site-install
 $ docker-compose exec php ./vendor/bin/run drupal:testing-setup
-$ docker-compose exec -u www-data php ./vendor/bin/drush sql-dump --result-file=sites/default/files/test.sql
+$ docker-compose exec -u www-data php ./vendor/bin/drush sql-dump --extra-dump=--skip-ssl --result-file=sites/default/files/test.sql
 ```
 
 2. Go to [http://localhost:8080](http://localhost:8080) and you have a Drupal site running. To log in, use `admin` / `admin`.

@@ -102,7 +102,7 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     $this->getSession()->getPage()->selectFieldOption('Country', 'France');
     $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->getPage()->fillField('Street address', 'One street');
-    $this->getSession()->getPage()->fillField('Postal code', 10000);
+    $this->getSession()->getPage()->fillField('Postal code', '10000');
     $this->getSession()->getPage()->fillField('City', 'Paris');
     $this->getSession()->getPage()->pressButton('Continue to review');
     \Drupal::entityTypeManager()->getStorage('commerce_shipment')->resetCache();
@@ -159,9 +159,9 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
     $this->getSession()->getPage()->pressButton('Checkout');
 
     $postal_codes = [
-      'Belgium' => 1000,
-      'France' => 10000,
-      'Italy' => 20010,
+      'Belgium' => '1000',
+      'France' => '10000',
+      'Italy' => '20010',
     ];
     $this->getSession()->getPage()->selectFieldOption('Country', $country);
     $this->assertSession()->assertWaitOnAjaxRequest();

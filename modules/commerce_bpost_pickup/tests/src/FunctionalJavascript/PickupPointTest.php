@@ -41,7 +41,7 @@ class PickupPointTest extends BpostWebDriverTestBase {
     ], $this->getSelectOptions($this->getSession()->getPage()->findField('Please select your delivery choice')));
     $this->getSession()->getPage()->selectFieldOption('Please select your delivery choice', 'Pickup point');
     $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->getSession()->getPage()->fillField('bpost_shipping[search_wrapper][postal_code]', 1000);
+    $this->getSession()->getPage()->fillField('bpost_shipping[search_wrapper][postal_code]', '1000');
     $this->getSession()->getPage()->pressButton('Search');
     $this->assertSession()->assertWaitOnAjaxRequest();
     $this->assertSession()->pageTextNotContains('Your selection');
@@ -123,7 +123,7 @@ class PickupPointTest extends BpostWebDriverTestBase {
     // Go back and change the pick up point from a different post code.
     $this->getSession()->getPage()->clickLink('Go back');
     $this->assertCurrentSelection('BRUXELLES DE BROUCKERE', 'BOULEVARD ANSPACH 1, 1000 BRUXELLES');
-    $this->getSession()->getPage()->fillField('bpost_shipping[search_wrapper][postal_code]', 1050);
+    $this->getSession()->getPage()->fillField('bpost_shipping[search_wrapper][postal_code]', '1050');
     $this->getSession()->getPage()->pressButton('Search');
     $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->getPage()->clickLink('QUARTIER GENERAL IXELLES');
@@ -194,7 +194,7 @@ class PickupPointTest extends BpostWebDriverTestBase {
 
     $this->getSession()->getPage()->selectFieldOption('Please select your delivery choice', 'Pickup point');
     $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->getSession()->getPage()->fillField('bpost_shipping[search_wrapper][postal_code]', 1000);
+    $this->getSession()->getPage()->fillField('bpost_shipping[search_wrapper][postal_code]', '1000');
     $this->getSession()->getPage()->pressButton('Search');
     $this->assertSession()->assertWaitOnAjaxRequest();
 
