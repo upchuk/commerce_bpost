@@ -267,7 +267,7 @@ class HomeDelivery extends BpostServicePluginBase {
 
     // Pack and save the shipments.
     $order_shipments = $order->get('shipments')->referencedEntities();
-    list($packed_shipments, $removed_shipments) = $this->packerManager->packToShipments($order, $profile, $order_shipments);
+    [$packed_shipments, $removed_shipments] = $this->packerManager->packToShipments($order, $profile, $order_shipments);
 
     $shipments = [];
     foreach ($packed_shipments as $shipment) {

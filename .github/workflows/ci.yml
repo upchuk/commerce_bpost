@@ -1,0 +1,47 @@
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Docker using Docker's official script
+        run: |
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
+        continue-on-error: false
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+        continue-on-error: false
+
+      - name: Set up docker
+        run: |
+          docker-compose up -d
+
+      - name: Wait for the container to be ready
+        run: |
+          sleep 10
+
+      - name: Composer install
+        run: docker-compose exec -T -u root php composer install
+
+      - name: Install site
+        run: |
+          docker-compose exec -T -u root php ./vendor/bin/run drupal:site-install
+          docker-compose exec -T -u root php chown -R www-data:www-data build
+          docker-compose exec -T -u root php chmod -R 777 build/sites/default
+
+      - name: PHP CS
+        run: |
+          docker-compose exec -T php ./vendor/bin/run drupal:phpcs
+
+      - name: Tests
+        run: |
+          docker-compose exec -T -u root mariadb mysqldump -u root -ppassword --databases drupal > build/sites/default/files/test.sql
+          docker-compose exec -T -u www-data php ./vendor/bin/phpunit
