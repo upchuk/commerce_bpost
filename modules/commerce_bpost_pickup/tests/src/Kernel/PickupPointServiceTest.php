@@ -19,7 +19,7 @@ class PickupPointServiceTest extends BpostKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'commerce_bpost_pickup',
     'commerce_bpost_pickup_test',
     'leaflet',
@@ -33,7 +33,7 @@ class PickupPointServiceTest extends BpostKernelTestBase {
     parent::setUp();
 
     $this->installConfig(['commerce_bpost_pickup']);
-    module_load_install('commerce_bpost_pickup_test');
+    \Drupal::moduleHandler()->loadInclude('commerce_bpost_pickup_test', 'install');
     commerce_bpost_pickup_test_install();
   }
 

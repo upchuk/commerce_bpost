@@ -75,7 +75,7 @@ function commerce_bpost_test_install() {
     'stores' => [$store->id()],
     'plugin' => [
       'target_plugin_id' => 'bpost',
-      'target_plugin_configuration' => json_decode(file_get_contents(drupal_get_path('module', 'commerce_bpost_test') . '/default_shipping_method_config.json'), TRUE),
+      'target_plugin_configuration' => json_decode(file_get_contents(\Drupal::service('extension.list.module')->getPath('commerce_bpost_test') . '/default_shipping_method_config.json'), TRUE),
     ],
   ]);
 
@@ -83,7 +83,7 @@ function commerce_bpost_test_install() {
 
   // Update the checkout pane.
   if (\Drupal::entityTypeManager()->hasDefinition('commerce_checkout_flow')) {
-    $storage = new FileStorage(drupal_get_path('module', 'commerce_bpost_test') . '/config/tasks');
+    $storage = new FileStorage(\Drupal::service('extension.list.module')->getPath('commerce_bpost_test') . '/config/tasks');
     $config = $storage->read('commerce_checkout.commerce_checkout_flow.default');
     $entity_storage = \Drupal::entityTypeManager()->getStorage('commerce_checkout_flow');
     $entity = $entity_storage->updateFromStorageRecord(CheckoutFlow::load('default'), $config);

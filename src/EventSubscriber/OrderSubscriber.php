@@ -111,7 +111,7 @@ class OrderSubscriber implements EventSubscriberInterface {
       // we need to catch these.
       $box = $service->prepareDeliveryBox($shipment);
       $event = new BoxPreparationEvent($shipment, $box);
-      $this->evenDispatcher->dispatch(BoxPreparationEvent::BOX_ALTER, $event);
+      $this->evenDispatcher->dispatch($event, BoxPreparationEvent::BOX_ALTER);
     }
     catch (\Exception $e) {
       $exception = new BpostCheckoutException($e->getMessage());
