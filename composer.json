@@ -6,16 +6,15 @@
         "php": ">=8.1",
         "antidot-be/bpost-api-library": "^3.4",
         "drupal/commerce_shipping": "~2",
-        "drupal/core": "~10.3.0"
+        "drupal/core": "^10"
     },
     "require-dev": {
         "composer/installers": "^1.5",
         "cweagans/composer-patches": "~1.4",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
         "drupal/admin_toolbar": "^3",
-        "drupal/core-composer-scaffold": "~10.3.0",
-        "drupal/core-dev": "~10.3.0",
-        "drupal/devel_entity_updates": "^4",
+        "drupal/core-composer-scaffold": "^10",
+        "drupal/core-dev": "^10",
         "drupal/leaflet": "^10",
         "drush/drush": "^12",
         "openeuropa/task-runner": "^2",
