@@ -43,5 +43,4 @@ jobs:
 
       - name: Tests
         run: |
-          docker-compose exec -T -u root mariadb mysqldump -u root -ppassword --databases drupal > build/sites/default/files/test.sql
           docker-compose exec -T -u www-data php ./vendor/bin/phpunit

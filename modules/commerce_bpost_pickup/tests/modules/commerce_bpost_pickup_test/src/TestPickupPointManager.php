@@ -16,7 +16,7 @@ class TestPickupPointManager implements PickupPointManagerInterface {
    */
   public function getClosestToPostalCode(int $postal_code, int $type, int $total) {
     $filename = $postal_code . '-' . $type . '-' . $total;
-    $path = drupal_get_path('module', 'commerce_bpost_pickup_test') . '/fixtures/closest-to-postcode/' . $filename . '.txt';
+    $path = \Drupal::service('extension.list.module')->getPath('commerce_bpost_pickup_test') . '/fixtures/closest-to-postcode/' . $filename . '.txt';
     if (file_exists($path)) {
       $contents = file_get_contents($path);
       return unserialize($contents);
@@ -30,7 +30,7 @@ class TestPickupPointManager implements PickupPointManagerInterface {
    */
   public function getPointDetails(int $point_id, int $point_type) {
     $filename = $point_id . '-' . $point_type;
-    $path = drupal_get_path('module', 'commerce_bpost_pickup_test') . '/fixtures/point-details/' . $filename . '.txt';
+    $path = \Drupal::service('extension.list.module')->getPath('commerce_bpost_pickup_test') . '/fixtures/point-details/' . $filename . '.txt';
 
     if (file_exists($path)) {
       $contents = file_get_contents($path);

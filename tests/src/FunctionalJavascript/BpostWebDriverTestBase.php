@@ -18,9 +18,10 @@ class BpostWebDriverTestBase extends CommerceWebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'commerce_bpost_test',
     'commerce_bpost_client_test',
+    'commerce_product',
   ];
 
   /**

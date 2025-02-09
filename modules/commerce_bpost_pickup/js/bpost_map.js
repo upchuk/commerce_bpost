@@ -2,9 +2,10 @@
 
   Drupal.behaviors.map = {
     attach: function(context, settings) {
-      $('.bpost-poi-link').each(function(index, item) {
+      const $elements =  $(once('bpost-map-items', '.bpost-poi-link'));
+      $elements.each(function(index, item) {
         var $element = $(item);
-        $element.once().click(function(e) {
+        $element.click(function(e) {
           e.preventDefault();
           var lat = $element.attr('data-poi-lat');
           var lon = $element.attr('data-poi-lon');
@@ -16,9 +17,10 @@
         });
       });
 
-      $('.leaflet-marker-icon').each(function(index, item) {
+      const $icons =  $(once('bpost-map-icons', '.leaflet-marker-icon'));
+      $icons.each(function(index, item) {
         var $marker = $(item);
-        $marker.once().on('click', function(e) {
+        $marker.on('click', function(e) {
           removePoiSelections();
 
           var $poi_id = $($marker.find('i')[0]).attr('data-poi-id');

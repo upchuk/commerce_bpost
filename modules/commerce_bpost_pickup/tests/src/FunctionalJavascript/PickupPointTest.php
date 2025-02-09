@@ -15,7 +15,7 @@ class PickupPointTest extends BpostWebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'commerce_bpost_pickup',
     'commerce_bpost_pickup_test',
   ];

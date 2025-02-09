@@ -4,7 +4,7 @@ namespace Drupal\commerce_bpost\Event;
 
 use Bpost\BpostApiClient\Bpost\Order\Box;
 use Drupal\commerce_shipping\Entity\ShipmentInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event used in the box preparation process.

@@ -75,7 +75,7 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'physical',
     'path',
     'telephone',
@@ -109,7 +109,7 @@ abstract class BpostKernelTestBase extends OrderKernelTestBase {
 
     $this->store->delete();
 
-    module_load_install('commerce_bpost_test');
+    \Drupal::moduleHandler()->loadInclude('commerce_bpost_test', 'install');
     commerce_bpost_test_install();
 
     $stores = \Drupal::entityTypeManager()->getStorage('commerce_store')->loadByProperties(['name' => 'Test store']);

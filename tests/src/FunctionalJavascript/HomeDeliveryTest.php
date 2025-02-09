@@ -163,8 +163,10 @@ class HomeDeliveryTest extends BpostWebDriverTestBase {
       'France' => '10000',
       'Italy' => '20010',
     ];
-    $this->getSession()->getPage()->selectFieldOption('Country', $country);
-    $this->assertSession()->assertWaitOnAjaxRequest();
+    if ($country !== 'Belgium') {
+      $this->getSession()->getPage()->selectFieldOption('Country', $country);
+      $this->assertSession()->assertWaitOnAjaxRequest();
+    }
     $this->getSession()->getPage()->fillField('First name', 'Danny');
     $this->getSession()->getPage()->fillField('Last name', 'S');
     $this->getSession()->getPage()->fillField('Street address', 'One street');
